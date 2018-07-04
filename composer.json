@@ -1,0 +1,8 @@
+{
+    "require": {
+        "twbs/bootstrap": "^4.1",
+        "datatables/datatables": "^1.10",
+        "fortawesome/font-awesome": "^4.7",
+        "eonasdan/bootstrap-datetimepicker": "^4.17"
+    }
+}
