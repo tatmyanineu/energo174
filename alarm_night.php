@@ -57,18 +57,7 @@ $date2 = date("d.m.Y 05:00");
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-3 col-md-2 sidebar">
-                        <ul class="nav nav-sidebar">
-                            <li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>
-                            <li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>
-                            <?php
-                            if ($_SESSION['privelege'] > 0) {
-                                echo '<li><a href="alarm.php" data-toggle="tooltip" data-placement="right" title="Процент неисправных обьектов: ' . number_format($_SESSION['proc'], 2) . '%"><span class="glyphicon glyphicon-bell" ></span><span id="reload_alarm" class="badge pull-right">' . $_SESSION['alarm'] . '</span> Аварии   </a></li>'
-                                . '<li><a href="maps.php"><span class="glyphicon glyphicon-globe"></span> Карта </a></li>'
-                                . '<li><a href="logs.php"><span class="glyphicon glyphicon-book"></span> Логи </a></li>'
-                                . '<li><a href="tickets.php"><span class="glyphicon glyphicon-tags"></span> <span id="reload_alarm" class="badge pull-right">' . $_SESSION['count_ticiket'] . '</span> Заявки</a></li>';
-                            }
-                            ?>
-                        </ul>
+                        <?php include './include/menu.php'; ?> 
                         <ul class="nav nav-sidebar">
                             <li><a href="#" id="export_limit"><span class="glyphicon glyphicon-floppy-disk"></span>Сохранить отчет</a></li>
                         </ul>
@@ -143,7 +132,7 @@ $date2 = date("d.m.Y 05:00");
                 type: 'POST',
                 chase: false,
                 url: 'ajax/ajax_alarm_night.php',
-                data: {date1: date1, date2: date2, pogr: pogr, type_arch: type_arch, alarm_box:alarm_box},
+                data: {date1: date1, date2: date2, pogr: pogr, type_arch: type_arch, alarm_box: alarm_box},
                 beforeSend: function () {
                     $('#all_object').html('<div id="circularG"> <div id="circularG_1" class="circularG"> </div> <div id="circularG_2" class="circularG"> </div> <div id="circularG_3" class="circularG"> </div> <div id="circularG_4" class="circularG"> </div> <div id="circularG_5" class="circularG"> </div> <div id="circularG_6" class="circularG"> </div> <div id="circularG_7" class="circularG"> </div> <div id="circularG_8" class="circularG"> </div> </div>');
                 },

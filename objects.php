@@ -1,4 +1,9 @@
 <?php
+
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 include 'db_config.php';
 $date = date('Y-m-d');
 session_start();
@@ -89,8 +94,8 @@ switch ($_SESSION['privelege']) {
             <div class="row">
                 <!--Боковое меню -->
                 <div class="col-sm-3 col-md-2 sidebar">
-                   <?php include './include/menu.php'; ?> 
-
+                    <?php include './include/menu.php'; ?> 
+                    <?php include './include/menu_rso.php'; ?> 
                 </div>
                 <!--Боковое меню -->
 

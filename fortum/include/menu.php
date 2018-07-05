@@ -20,7 +20,6 @@ echo '<ul class="nav nav-sidebar">'
  . '<li><a href = "settings.php"><span class = "glyphicon glyphicon-cog"></span>  Настройка</a></li>'
  . '<li><a href = "objects.php"><span class = "glyphicon glyphicon-list"></span>  Объекты инфо</a></li>'
  . '<li><a href = "sens.php"><span class = "glyphicon glyphicon-dashboard"></span>  Приборы инфо</a></li>'
- . '<li><a href = "logs.php"><span class = "glyphicon glyphicon-tasks"></span>  Лог файлов</a></li>'
  . '<li><a href = "mail_settings.php"><span class = "glyphicon glyphicon-envelope"></span>  Настройки отправки</a></li>'
  . '</ul>';
 ?>

@@ -333,9 +333,9 @@ for ($i = 0; $i < count($array_pogr); $i++) {
     if ($k === false) {
 
         $text_error = 'Погрешность => ((Подача (t1: ' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ') / Обратка (t2: ' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') )*100)-100 = ' . number_format($array_pogr[$i]['t'], 2, '.', '') . '; Погреш. (' . number_format($array_pogr[$i]['t'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
+        $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['t'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
 
-
-        $sql_add = pg_query('INSERT INTO fault_inc(numb, date_time, plc_id, param, view_stat, comments) VALUES (' . $type_error . ', \'' . $date_b . '\', ' . $array_pogr[$i]['plc_id'] . ', \'\', 0, \'' . $text_error . '\')');
+        $sql_add = pg_query('INSERT INTO fault_inc(numb, date_time, plc_id, param, view_stat, comments) VALUES (' . $type_error . ', \'' . $date_b . '\', ' . $array_pogr[$i]['plc_id'] . ', \''.$mini_error.'\', 0, \'' . $text_error . '\')');
         $id_list[] = $array_pogr[$i]['plc_id'];
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 include 'db_config.php';
 $date = date('Y-m-d');
 session_start();

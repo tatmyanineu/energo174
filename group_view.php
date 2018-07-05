@@ -1,7 +1,6 @@
 <?php
 //Добавить шифрование пароля для передачи в скрипте ajax
 
-
 include 'db_config.php';
 session_start();
 

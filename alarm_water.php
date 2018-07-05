@@ -11,7 +11,6 @@ $after_day = date("Y-m-d", $time);
 
  * 
  */
-
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -66,19 +65,7 @@ $after_day = date("Y-m-d", $time);
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-3 col-md-2 sidebar">
-                        <ul class="nav nav-sidebar">
-                            <li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>
-                            <li><a href="reports.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>
-                            <?php
-                            if ($_SESSION['privelege'] > 0) {
-                                echo '<li><a href="alarm.php" data-toggle="tooltip" data-placement="right" title="Процент неисправных обьектов: ' . number_format($_SESSION['proc'], 2) . '%"><span class="glyphicon glyphicon-bell" ></span><span id="reload_alarm" class="badge pull-right">' . $_SESSION['alarm'] . '</span> Аварии   </a></li>'
-                                . '<li><a href="maps.php"><span class="glyphicon glyphicon-globe"></span> Карта </a></li>'
-                                . '<li><a href="logs.php"><span class="glyphicon glyphicon-book"></span> Логи </a></li>'
-                                . '<li><a href="tickets.php"><span class="glyphicon glyphicon-tags"></span> <span id="reload_alarm" class="badge pull-right">' . $_SESSION['count_ticiket'] . '</span> Заявки</a></li>';
-
-                            }
-                            ?>
-                        </ul>
+                        <?php include './include/menu.php'; ?> 
                         <ul class="nav nav-sidebar">
                             <li><a id="export_limit" href="#"><span class="glyphicon glyphicon-floppy-disk"></span>Сохранить отчет</a></li>
                         </ul>
@@ -90,7 +77,7 @@ $after_day = date("Y-m-d", $time);
                             <li><a href="alarm_massa.php">Аномалии теплоносителя</a></li>
                             <li><a href="alarm_temper.php">Аномалии тепературы</a></li>
                             <li><a href="alarm_impuls.php">Аномалии данных ХВС</a></li>
-                             <li><a href="alarm_night.php">Аварии ХВС(Ночная утечка) </a></li>
+                            <li><a href="alarm_night.php">Аварии ХВС(Ночная утечка) </a></li>
                             <li><a href="alarm_dt.php">Заниженная dt </a></li>
                         </ul>
                     </div>
@@ -174,7 +161,7 @@ $after_day = date("Y-m-d", $time);
                     }
 
                     $(document).ready(function () {
-                      frame_hieght();
+                        frame_hieght();
                         priveleg = <?php echo $_SESSION['privelege']; ?>;
                         var date_now = $('#datetimepicker1').val();
                         var date_afte = $('#datetimepicker2').val();
@@ -201,7 +188,7 @@ $after_day = date("Y-m-d", $time);
                                         }
 
                                     })
-                                   frame_hieght();
+                                    frame_hieght();
                                 }
                             });
                             return false;
@@ -270,7 +257,7 @@ $after_day = date("Y-m-d", $time);
                                             }
 
                                         })
-                                       frame_hieght();
+                                        frame_hieght();
                                     }
                                 });
                                 return false;

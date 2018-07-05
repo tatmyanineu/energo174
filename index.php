@@ -375,7 +375,7 @@ if (isset($_POST['submit'])) {
                 $p = ($er / count($all_school)) * 100;
                 $_SESSION['proc'] = $p;
 
-                $sql_all_fp = pg_query('SELECT * FROM password_forgot');
+                $sql_all_fp = pg_query('SELECT * FROM password_forgot where status =0');
                 $_SESSION['reports_passord'] = pg_num_rows($sql_all_fp);
             } else {
                 $sql_main_form = pg_query('SELECT id, plc_id, warm, date_warm, error_warm, water, date_water, error_water, marker FROM table_tpm');
@@ -404,7 +404,7 @@ if (isset($_POST['submit'])) {
                 $p = ($er / count($all_school)) * 100;
                 $_SESSION['proc'] = $p;
 
-                $sql_all_fp = pg_query('SELECT * FROM password_forgot');
+                $sql_all_fp = pg_query('SELECT * FROM password_forgot where status =0');
                 $_SESSION['reports_passord'] = pg_num_rows($sql_all_fp);
             }
         }

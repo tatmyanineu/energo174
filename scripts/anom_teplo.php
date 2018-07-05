@@ -390,22 +390,22 @@ for ($i = 0; $i < count($array_pogr); $i++) {
         if ($array_pogr[$i]['e'] == 1) { // $m = (($m_n - $m2) / $m_n) * 100;
             if ($m3 != '-') {
                 $text_error = 'Погрешность => (((Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ') + Подача (m3: ' . number_format($array_pogr[$i]['m3'], 2, '.', '') . ')) - Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . '))/ Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ') + Подача (m3: ' . number_format($array_pogr[$i]['m3'], 2, '.', '') . ' ))*100 = ' . number_format($array_pogr[$i]['m'], 2, '.', '') . '; Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
-                $mini_error = '';
+                $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
             } else {
                 $text_error = 'Погрешность => ((Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ') - Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . '))/ Обратка (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . '))*100 = ' . number_format($array_pogr[$i]['m'], 2, '.', '') . '; Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
-                $mini_error = '';
+                $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
             }
         } else {
             if ($m3 != '-') { // $m = (($m_n - $m2) / $m2) * 100;
                 $text_error = 'Погрешность => (((Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ') + Подача (m3: ' . number_format($array_pogr[$i]['m3'], 2, '.', '') . ')) - Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . '))/ Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . ' ))*100 = ' . number_format($array_pogr[$i]['m'], 2, '.', '') . '; Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
-                $mini_error = '';
+                $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
             } else {
                 $text_error = 'Погрешность => ((Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ')  - Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . '))/ Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . '))*100 = ' . number_format($array_pogr[$i]['m'], 2, '.', '') . '; Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
-                $mini_error = '';
+                $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
             }
         }
 
-        $sql_add = pg_query('INSERT INTO fault_inc(numb, date_time, plc_id, param, view_stat, comments) VALUES (' . $type_error . ', \'' . $date_b . '\', ' . $array_pogr[$i]['plc_id'] . ', \'\', 0, \'' . $text_error . '\')');
+        $sql_add = pg_query('INSERT INTO fault_inc(numb, date_time, plc_id, param, view_stat, comments) VALUES (' . $type_error . ', \'' . $date_b . '\', ' . $array_pogr[$i]['plc_id'] . ', \''.$mini_error.'\', 0, \'' . $text_error . '\')');
         $id_list[] = $array_pogr[$i]['plc_id'];
     }
     echo '<tr data-href="object.php?id_object=' . $array_pogr[$i]['plc_id'] . '">'
