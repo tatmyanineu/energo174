@@ -96,24 +96,24 @@ $inc = pg_fetch_all($sql_inc);
                             <div class="col-lg-12 col-md-12 col-xs-12">
                                 <div>
                                     <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Учереждение:</b></h4></div>
-                                        <div class="col-lg-4 col-md-4 col-xs-12"><h4><?php echo "<a href='object.php?id_object=" . $_GET[plc] . "' >" . $name[0][Name] . "</a>"; ?></h4></div>
+                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Учереждение:</b></h4></div>
+                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo "<a href='object.php?id_object=" . $_GET[plc] . "' >" . $name[0][Name] . "</a>"; ?></h4></div>
                                     </div>
                                     <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Дата ошибки:</b></h4></div>
-                                        <div class="col-lg-4 col-md-4 col-xs-12"><h4><?php echo date("d.m.Y", strtotime($inc[0]['date_time'])); ?></h4></div>
+                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Дата ошибки:</b></h4></div>
+                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo date("d.m.Y", strtotime($inc[0]['date_time'])); ?></h4></div>
                                     </div>
                                     <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Тип инцидента:</b></h4></div>
-                                        <div class="col-lg-4 col-md-4 col-xs-12"><h4><?php echo $inc[0]['name']; ?></h4></div>
+                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Тип инцидента:</b></h4></div>
+                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo $inc[0]['name']; ?></h4></div>
                                     </div>
                                     <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Параметры инцидента:</b></h4></div>
-                                        <div class="col-lg-4 col-md-4 col-xs-12"><h4><?php echo $inc[0]['comments']; ?></h4></div>
+                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Параметры инцидента:</b></h4></div>
+                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo $inc[0]['comments']; ?></h4></div>
                                     </div>
                                     <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Статус инцидента:</b></h4></div>
-                                        <div class="col-lg-4 col-md-4 col-xs-12"><h4><?php
+                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Статус инцидента:</b></h4></div>
+                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php
                                         
                                                 switch ($inc[0]['view_stat']){
                                                     case 0:$stat = "Новый";
