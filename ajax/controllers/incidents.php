@@ -51,7 +51,7 @@ while($row = pg_fetch_row($sql)){
         'incedent'=>$row[1],
         'date'=> date("d.m.Y" , strtotime($row[2])),
         'view'=>$status,
-        'comment'=>$row[5],
+        'comment'=>$row[3],
         'plc_id'=>$row[6],
         'inc_id'=>$row[7]
     );
