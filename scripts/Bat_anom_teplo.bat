@@ -1,1 +1,1 @@
-C:\"Program Files (x86)"\PHP\v5.6\php-cgi.exe -f C:\inetpub\wwwroot\pulsar\energo174.ru\anom_teplo.php
+C:\"Program Files (x86)"\PHP\v5.6\php-cgi.exe -f C:\inetpub\wwwroot\energo174.ru\scripts\anom_teplo.php

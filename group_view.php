@@ -103,16 +103,16 @@ $name = pg_fetch_result($sqlGroup, 0, 0);
                                                 <div class="col-lg-7 col-md-7 col-xs-12"><input type="text" id="AddPasswd" class="form-control"/></div>
                                             </div>
                                             <div class="row" style="margin-bottom: 15px;">
-                                                <div class="col-lg-5 col-md-5 col-xs-12">Придумать название</div>
+                                                <div class="col-lg-5 col-md-5 col-xs-12">Наименование объекта</div>
                                                 <div class="col-lg-7 col-md-7 col-xs-12"><input type="text" id="AddSurname" class="form-control"/></div>
                                             </div>
                                             <div class="row" style="margin-bottom: 15px;">
-                                                <div class="col-lg-5 col-md-5 col-xs-12">Придумать название</div>
+                                                <div class="col-lg-5 col-md-5 col-xs-12">Адрес</div>
                                                 <div class="col-lg-7 col-md-7 col-xs-12"><input type="text" id="AddName" class="form-control"/></div>
                                             </div>
                                             <div class="row" style="margin-bottom: 15px;">
                                                 <div class="col-lg-5 col-md-5 col-xs-12">Права</div>
-                                                <div class="col-lg-7 col-md-7 col-xs-12"><input type="text" id="AddRole" class="form-control"/></div>
+                                                <div class="col-lg-7 col-md-7 col-xs-12"><input type="text" id="AddRole" class="form-control" value="0"></div>
                                             </div>
                                         </form>
                                     </div>

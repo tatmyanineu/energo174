@@ -42,7 +42,7 @@ session_start();
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a id="forBrand" href="#">Пользователь</a></li>
+                            <li><a id="forBrand" href="#">Пользователь: <?php echo $_SESSION['login'];?></a></li>
                             <li><a id="forBrand" href="index.php">Выход</a></li>
                         </ul>
 
@@ -56,7 +56,9 @@ session_start();
                 <div class="col-sm-3 col-md-2 sidebar">
                     <?php include 'include/menu.php'; ?>
 
-
+                    <ul class = "nav nav-sidebar">
+                       <li><a href="controller_param.php" class="toggle-vis" data-column="2"><span class=""></span> Параметры  </a></li>
+                    </ul>
 
 
                     <!--                    <ul class = "nav nav-sidebar">
@@ -131,6 +133,7 @@ session_start();
                         type: "POST",
                         url: "ajax/controllers/incidents.php",
                     },
+
                     columns: [
                         {data: "id", searchable: false},
                         {data: "name"},
@@ -144,8 +147,16 @@ session_start();
                                 $(nTd).html("<a href='controller_log.php?plc=" + oData.plc_id + "&date=" + oData.date + "&inc=" + oData.inc_id + "'><span class='glyphicon glyphicon-eye-open'></span></a>");
                             }
                         },
-                    ]
-                });
+                    ],
+                    createdRow: function (row, data, dataIndex) {
+                        if (data.view == "Новый") {
+                            $(row).addClass('danger');
+                        }
+
+
+                    }
+                }
+                );
                 $('#example')
                         .removeClass('display')
                         .addClass('table table-striped table-bordered');
