@@ -79,7 +79,7 @@ include './db_config.php';
                                     . '</div>'
                                     . '<div class="row" style="margin-top: 20px;">'
                                     . '<div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Дата последнего выполнения</b></h4></div>'
-                                    . '<div class="col-lg-4 col-md-4 col-xs-12"><h4>' . date('d.m.Y h:s:00', strtotime($row[3])) . '</h4></div>'
+                                    . '<div class="col-lg-4 col-md-4 col-xs-12"><h4>' . date('d.m.Y H:s:00', strtotime($row[3])) . '</h4></div>'
                                     . '</div>'
                                     . '</div>'
                                     . '</div>';

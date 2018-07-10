@@ -1,9 +1,11 @@
 <?php
-
 include 'db_config.php';
 $date = date('Y-m-d');
 session_start();
 $id_object = $_GET['id_object'];
+if (isset($_GET['inc'])) {
+    $inc = $_GET['inc'];
+}
 $file = basename($_SERVER['PHP_SELF'], ".php");
 
 $sql_search_object = pg_query('SELECT DISTINCT 
@@ -445,6 +447,8 @@ if (pg_num_rows($sql_search_object) != 0) {
             var priveleg = <?php echo $_SESSION['privelege']; ?>;
             var id_object = <?php echo $id_object; ?>;
             var type_arch = $('#type_archive').val();
+            var inc =<?php echo (isset($_GET['inc']) ? $_GET['inc'] : 0) ?>;
+
             view_archive_date(id_object, type_arch, year, month);
 
             $('#reload_alarm').click(function () {

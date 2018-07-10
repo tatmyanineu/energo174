@@ -35,13 +35,13 @@ while($row = pg_fetch_row($sql)){
             $status = "Просмотрен";
             break;
         case 2:
-            $status = "Выполнен";
+            $status = "В работе";
             break;
         case 3:
-            $status = "Выполнен";
+            $status = "Завершен";
             break;
         case 4:
-            $status = "Выполнен";
+            $status = "Удален";
             break;
     }
     

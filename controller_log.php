@@ -1,18 +1,7 @@
 <?php
-
 include 'db_config.php';
 $date = date('Y-m-d');
 session_start();
-
-$upd_status = pg_query('UPDATE fault_inc SET view_stat=1 WHERE id='.$_GET['inc']);
-
-$sql_name = pg_query('SELECT 
-  "Tepl"."Places_cnt"."Name"
-FROM
-  "Tepl"."Places_cnt"
-WHERE
-  "Tepl"."Places_cnt".plc_id = ' . $_GET['plc']);
-$name = pg_fetch_all($sql_name);
 
 $sql_inc = pg_query('SELECT 
   public.fault_inc.date_time,
@@ -27,7 +16,18 @@ WHERE
 
 $inc = pg_fetch_all($sql_inc);
 
+if ($inc[0]['view_stat'] == 0) {
+    $upd_status = pg_query('UPDATE fault_inc SET view_stat=1 WHERE id=' . $_GET['inc']);
+}
 
+
+$sql_name = pg_query('SELECT 
+  "Tepl"."Places_cnt"."Name"
+FROM
+  "Tepl"."Places_cnt"
+WHERE
+  "Tepl"."Places_cnt".plc_id = ' . $_GET['plc']);
+$name = pg_fetch_all($sql_name);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -88,52 +88,60 @@ $inc = pg_fetch_all($sql_inc);
                         </div>
                     </h1>
                     <div>
-                        <ul class="nav nav-tabs nav-justified">
-                            <li class="active"><a href="#">Журнал инцидента</a></li>
-                            <li><a href="#">Воспроизвести ошибку</a></li>
+                        <ul class="nav nav-tabs nav-justified" id="tabs" role="tablist">
+                            <li class="active"><a href="#journal" id="journal-tab" role="tab" >Журнал инцидента</a></li>
+                            <li><a href="#view" id="view-tab">Воспроизвести ошибку</a></li>
                         </ul>
-                        <div>
-                            <div class="col-lg-12 col-md-12 col-xs-12">
-                                <div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Учереждение:</b></h4></div>
-                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo "<a href='object.php?id_object=" . $_GET[plc] . "' >" . $name[0][Name] . "</a>"; ?></h4></div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Дата ошибки:</b></h4></div>
-                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo date("d.m.Y", strtotime($inc[0]['date_time'])); ?></h4></div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Тип инцидента:</b></h4></div>
-                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo $inc[0]['name']; ?></h4></div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Параметры инцидента:</b></h4></div>
-                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo $inc[0]['comments']; ?></h4></div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Статус инцидента:</b></h4></div>
-                                        <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php
-                                        
-                                                switch ($inc[0]['view_stat']){
-                                                    case 0:$stat = "Новый";
-                                                        break;
-                                                    case 1:$stat = "Просмотрен";
-                                                        break;
-                                                    case 2:$stat = "В работе";
-                                                        break;
-                                                    case 3:$stat = "Закрыт";
-                                                        break;
-                                                    case 4:$stat = "Удален";
-                                                        break;
-                                                }
-                                        ?></h4></div>
-                                    </div>
-                                    <div class="row" style="margin-top: 20px;">
-                                        <div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Комментарий пользователя:</b></h4></div>
-                                        <div class="col-lg-4 col-md-4 col-xs-12"><h4><?php ?></h4></div>
+
+
+                        <div id="" class="tab-content">
+
+                            <div class="tab-pane fade in active" id="journal">
+                                <div class="col-lg-12 col-md-12 col-xs-12">
+                                    <div>
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Учереждение:</b></h4></div>
+                                            <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo "<a href='object.php?id_object=" . $_GET[plc] . "&inc=" . $_GET['inc'] . "' >" . $name[0][Name] . "</a>"; ?></h4></div>
+                                        </div>
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Дата ошибки:</b></h4></div>
+                                            <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo date("d.m.Y", strtotime($inc[0]['date_time'])); ?></h4></div>
+                                        </div>
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Тип инцидента:</b></h4></div>
+                                            <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo $inc[0]['name']; ?></h4></div>
+                                        </div>
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Параметры инцидента:</b></h4></div>
+                                            <div class="col-lg-7 col-md-7 col-xs-12"><h4><?php echo $inc[0]['comments']; ?></h4></div>
+                                        </div>
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Статус инцидента:</b></h4></div>
+                                            <div class="col-lg-7 col-md-7 col-xs-12"><h4>
+                                                    <select class="form-control" id="stat_inc">
+                                                        <?php
+                                                        $stat_arr = ['0' => 'Новый', '1' => 'Просмотрен', '2' => 'В работе', '3' => 'Завершен', '4' => 'Удален'];
+                                                        foreach ($stat_arr as $key => $value) {
+                                                            echo ($key == $inc[0]['view_stat'] ? '<option value="' . $key . '" selected>' . $value . '</option>' : '<option value="' . $key . '">' . $value . '</option>');
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </h4></div>
+                                        </div>
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-lg-3 col-md-5 col-xs-12"><h4><b>Комментарий пользователя:</b></h4></div>
+                                            <div class="col-lg-7 col-md-7 col-xs-12"><textarea class="form-control" id="comm_inc"><?php echo $inc[0]['user_comment']; ?></textarea></div>
+                                        </div>
+                                        <div class="row" style="margin-top: 20px;">
+                                            <div class="col-lg-3 col-lg-offset-3 col-md-4 col-md-offset-4 col-xs-6"><button class="btn btn-primary btn-lg edit_inc" id="<?php echo $_GET['inc']; ?>">Обновить информацию</button></div>
+                                            <div class="col-lg-3 col-md-4  col-xs-6"><button class="btn btn-danger btn-lg del_inc" id="<?php echo $_GET['inc']; ?>">Удалить информацию</button></div>
+
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="tab-pane fade in" id="view" >
+
                             </div>
                         </div>
                     </div>
@@ -164,28 +172,65 @@ $inc = pg_fetch_all($sql_inc);
             }
         }
 
-        var refresh_table = function (plc, inc, date) {
-            $.ajax({
-                type: 'POST',
-                chashe: false,
-                url: 'ajax/controllers/view_incedent.php',
-                success: function (html) {
-                    alert(html);
-                    table.ajax.reload();
-                }
-            });
-            return false;
-        };
-
-
 
         $(document).ready(function () {
 
-            var date = <?php echo $_GET['date']; ?>
-            var plc = <?php echo $_GET['plc']; ?>
-            var inc = <?php echo $_GET['inc']; ?>
+            $('#tabs a').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+                if (this.id == "view-tab") {
+                    var plc =<?php echo $_GET['plc']; ?>;
+                    var id =<?php echo $_GET['inc']; ?>;
+                    var date = "<?php echo $_GET['date']; ?>";
+                    $.ajax({
+                        type: 'POST',
+                        cache: false,
+                        url: "ajax/controllers/view_incedent.php",
+                        data: {id: id, plc: plc, date: date},
+                        beforeSend: function () {
+                            $('#view').html('<div id="circularG"> <div id="circularG_1" class="circularG"> </div> <div id="circularG_2" class="circularG"> </div> <div id="circularG_3" class="circularG"> </div> <div id="circularG_4" class="circularG"> </div> <div id="circularG_5" class="circularG"> </div> <div id="circularG_6" class="circularG"> </div> <div id="circularG_7" class="circularG"> </div> <div id="circularG_8" class="circularG"> </div> </div>');
+                        },
+                        success: function (html) {
+                            $('#view').html(html);
+                        }
+                    });
+                    return false;
+                }
+                console.log(this.id);
+            })
 
-            refresh_table(plc, inc, date);
+            $('.edit_inc').click(function () {
+                var stat = $('#stat_inc').val();
+                var comm = $('#comm_inc').val();
+                var id = this.id;
+                var param = 1;
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: "ajax/controllers/edit_comments.php",
+                    data: {stat: stat, comm: comm, id: id, param: param},
+                    success: function (html) {
+                    }
+                });
+                return false;
+                //console.log(stat + " " + comm);
+            });
+
+            $('.del_inc').click(function () {
+                var id = this.id;
+                var param = 2;
+                $.ajax({
+                    type: 'POST',
+                    cache: false,
+                    url: "ajax/controllers/edit_comments.php",
+                    data: {param: param, id: id},
+                    success: function (html) {
+                        window.open('controller.php');
+                    }
+                });
+                return false;
+                //console.log(stat + " " + comm);
+            });
 
 
             $('.nav-sidebar li a').each(function () {
