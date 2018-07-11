@@ -15,8 +15,10 @@ while ($row = pg_fetch_row($sql_error)) {
     );
 }
 
-$date1 = date('Y-m-d');
-$date2 = date('Y-m-d', strtotime('-1 day'));
+//$date1 = date('Y-m-d');
+//$date2 = date('Y-m-d', strtotime('-1 day'));
+$date1 = '2018-05-02';
+$date2 = '2018-05-01';
 $pogr = $data['pogr'];
 $type_error = 2;
 
@@ -97,9 +99,46 @@ for ($i = 0; $i < count($array_archive); $i++) {
                     $t2 = $array_archive[$i]['value'];
                 }
 
+
                 $t = $t1 - $t2;
                 //echo $array_archive[$i]['plc_id'] . " " . $array_archive[$i]['date'] . " " . $array_archive[$i]['param_id'] . " " . $array_archive[$i]['value'] . "<br>";
-                if ($t < $pogr) {
+                if ($t1 == 0 or $t2 == 0) {
+
+
+                    $array_pogr[] = array(
+                        //echo $array_archive[$i]['plc_id'] . " " . $array_archive[$i]['date'] . " " . $array_archive[$i]['param_id'] . " " . $array_archive[$i]['value'] . "<br>";
+
+                        'plc_id' => $array_archive[$i]['plc_id'],
+                        'name' => $array_archive[$i]['name'],
+                        'date' => $array_archive[$i]['date'],
+                        't1' => $t1,
+                        't2' => $t2,
+                        't' => $t,
+                        'error' => 1
+                    );
+                } elseif ($t1 < $t2) {
+                    echo "ОШИБКА 0 =>" . $array_archive[$i]['plc_id'] . " t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> " . $tt . "<br>";
+
+                    $array_pogr[] = array(
+                        'plc_id' => $array_archive[$i]['plc_id'],
+                        'name' => $array_archive[$i]['name'],
+                        'date' => $array_archive[$i]['date'],
+                        't1' => $t1,
+                        't2' => $t2,
+                        't' => $t,
+                        'error' => 0
+                    );
+                } elseif ($t1 > 120 or $t2 > 120) {
+                    $array_pogr[] = array(
+                        'plc_id' => $array_archive[$i]['plc_id'],
+                        'name' => $array_archive[$i]['name'],
+                        'date' => $array_archive[$i]['date'],
+                        't1' => $t1,
+                        't2' => $t2,
+                        't' => $t,
+                        'error' => 2
+                    );
+                } elseif ($t < $pogr) {
                     //echo $array_archive[$i]['plc_id'] . " m1=" . $m1 . " m2=" . $m2 . " m=<b>" . $m . "</b> t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> <br>";
                     $array_pogr[] = array(
                         'plc_id' => $array_archive[$i]['plc_id'],
@@ -107,7 +146,8 @@ for ($i = 0; $i < count($array_archive); $i++) {
                         'date' => $array_archive[$i]['date'],
                         't1' => $t1,
                         't2' => $t2,
-                        't' => $t
+                        't' => $t,
+                        'error' => 3
                     );
                 }
 
@@ -130,8 +170,8 @@ for ($i = 0; $i < count($array_archive); $i++) {
 
             $t = $t1 - $t2;
             //echo $array_archive[$i]['plc_id'] . " " . $array_archive[$i]['date'] . " " . $array_archive[$i]['param_id'] . " " . $array_archive[$i]['value'] . "<br>";
-            if ($t < $pogr) {
-                //echo $array_archive[$i]['plc_id'] . " m1=" . $m1 . " m2=" . $m2 . " m=<b>" . $m . "</b> t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> <br>";
+            if ($t1 == 0 or $t2 == 0) {
+
 
                 $array_pogr[] = array(
                     'plc_id' => $array_archive[$i]['plc_id'],
@@ -139,7 +179,41 @@ for ($i = 0; $i < count($array_archive); $i++) {
                     'date' => $array_archive[$i]['date'],
                     't1' => $t1,
                     't2' => $t2,
-                    't' => $t
+                    't' => $t,
+                    'error' => 1
+                );
+            } elseif ($t1 < $t2) {
+                echo "ОШИБКА 0 =>" . $array_archive[$i]['plc_id'] . " t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> " . $tt . "<br>";
+
+                $array_pogr[] = array(
+                    'plc_id' => $array_archive[$i]['plc_id'],
+                    'name' => $array_archive[$i]['name'],
+                    'date' => $array_archive[$i]['date'],
+                    't1' => $t1,
+                    't2' => $t2,
+                    't' => $t,
+                    'error' => 0
+                );
+            } elseif ($t1 > 120 or $t2 > 120) {
+                $array_pogr[] = array(
+                    'plc_id' => $array_archive[$i]['plc_id'],
+                    'name' => $array_archive[$i]['name'],
+                    'date' => $array_archive[$i]['date'],
+                    't1' => $t1,
+                    't2' => $t2,
+                    't' => $t,
+                    'error' => 2
+                );
+            } elseif ($t < $pogr) {
+                //echo $array_archive[$i]['plc_id'] . " m1=" . $m1 . " m2=" . $m2 . " m=<b>" . $m . "</b> t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> <br>";
+                $array_pogr[] = array(
+                    'plc_id' => $array_archive[$i]['plc_id'],
+                    'name' => $array_archive[$i]['name'],
+                    'date' => $array_archive[$i]['date'],
+                    't1' => $t1,
+                    't2' => $t2,
+                    't' => $t,
+                    'error' => 3
                 );
             }
 
@@ -177,8 +251,7 @@ for ($i = 0; $i < count($array_archive); $i++) {
                 }
 
                 $t = $t1 - $t2;
-                if ($t < $pogr) {
-                    //echo $array_archive[$i]['plc_id'] . " m1=" . $m1 . " m2=" . $m2 . " m3=" . $m3 . " m=" . $m . " t1=" . $t1 . " t2=" . $t2 . " t3= " . $t3 . "  th=" . $th . " tw=" . $tw . "<br>";
+                if ($t1 == 0 or $t2 == 0) {
 
                     $array_pogr[] = array(
                         'plc_id' => $array_archive[$i]['plc_id'],
@@ -186,7 +259,41 @@ for ($i = 0; $i < count($array_archive); $i++) {
                         'date' => $array_archive[$i]['date'],
                         't1' => $t1,
                         't2' => $t2,
-                        't' => $t
+                        't' => $t,
+                        'error' => 1
+                    );
+                } elseif ($t1 < $t2) {
+                    echo "ОШИБКА 0 =>" . $array_archive[$i]['plc_id'] . " t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> " . $tt . "<br>";
+
+                    $array_pogr[] = array(
+                        'plc_id' => $array_archive[$i]['plc_id'],
+                        'name' => $array_archive[$i]['name'],
+                        'date' => $array_archive[$i]['date'],
+                        't1' => $t1,
+                        't2' => $t2,
+                        't' => $t,
+                        'error' => 0
+                    );
+                } elseif ($t1 > 120 or $t2 > 120) {
+                    $array_pogr[] = array(
+                        'plc_id' => $array_archive[$i]['plc_id'],
+                        'name' => $array_archive[$i]['name'],
+                        'date' => $array_archive[$i]['date'],
+                        't1' => $t1,
+                        't2' => $t2,
+                        't' => $t,
+                        'error' => 2
+                    );
+                } elseif ($t < $pogr) {
+                    //echo $array_archive[$i]['plc_id'] . " m1=" . $m1 . " m2=" . $m2 . " m=<b>" . $m . "</b> t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> <br>";
+                    $array_pogr[] = array(
+                        'plc_id' => $array_archive[$i]['plc_id'],
+                        'name' => $array_archive[$i]['name'],
+                        'date' => $array_archive[$i]['date'],
+                        't1' => $t1,
+                        't2' => $t2,
+                        't' => $t,
+                        'error' => 3
                     );
                 }
 
@@ -212,15 +319,50 @@ for ($i = 0; $i < count($array_archive); $i++) {
                 $t3 = $array_archive[$i]['value'];
             }
             $t = $t1 - $t2;
-            if ($t < $pogr) {
-                //echo $array_archive[$i]['plc_id'] . " m1=" . $m1 . " m2=" . $m2 . " m3=" . $m3 . " m=" . $m . " t1=" . $t1 . " t2=" . $t2 . " t3= " . $t3 . "  th=" . $th . " tw=" . $tw . "<br>";
+            if ($t1 == 0 or $t2 == 0) {
+
+
                 $array_pogr[] = array(
                     'plc_id' => $array_archive[$i]['plc_id'],
                     'name' => $array_archive[$i]['name'],
                     'date' => $array_archive[$i]['date'],
                     't1' => $t1,
                     't2' => $t2,
-                    't' => $t
+                    't' => $t,
+                    'error' => 1
+                );
+            } elseif ($t1 < $t2) {
+                    echo "ОШИБКА 0 =>" . $array_archive[$i]['plc_id'] . " t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> " . $tt . "<br>";
+
+                $array_pogr[] = array(
+                    'plc_id' => $array_archive[$i]['plc_id'],
+                    'name' => $array_archive[$i]['name'],
+                    'date' => $array_archive[$i]['date'],
+                    't1' => $t1,
+                    't2' => $t2,
+                    't' => $t,
+                    'error' => 0
+                );
+            } elseif ($t1 > 120 or $t2 > 120) {
+                $array_pogr[] = array(
+                    'plc_id' => $array_archive[$i]['plc_id'],
+                    'name' => $array_archive[$i]['name'],
+                    'date' => $array_archive[$i]['date'],
+                    't1' => $t1,
+                    't2' => $t2,
+                    't' => $t,
+                    'error' => 2
+                );
+            } elseif ($t < $pogr) {
+                //echo $array_archive[$i]['plc_id'] . " m1=" . $m1 . " m2=" . $m2 . " m=<b>" . $m . "</b> t1=" . $t1 . " t2=" . $t2 . " t=<b>" . $t . "</b> <br>";
+                $array_pogr[] = array(
+                    'plc_id' => $array_archive[$i]['plc_id'],
+                    'name' => $array_archive[$i]['name'],
+                    'date' => $array_archive[$i]['date'],
+                    't1' => $t1,
+                    't2' => $t2,
+                    't' => $t,
+                    'error' => 3
                 );
             }
 
@@ -232,7 +374,7 @@ for ($i = 0; $i < count($array_archive); $i++) {
     }
 }
 
-//var_dump($array_pogr);
+var_dump($array_pogr);
 
 echo "<table id='main_table' class='table table-bordered'>"
  . "<thead id='thead'>"
@@ -269,11 +411,45 @@ for ($i = 0; $i < count($array_pogr); $i++) {
 
     $k = array_search($array_pogr[$i]['plc_id'], $id_list);
     if ($k === false) {
-        
-        $text_error = 'dt => Подача (t1: '.number_format($array_pogr[$i]['t1'], 2, '.', ''). ') -  Обратка (t2: '.number_format($array_pogr[$i]['t2'], 2, '.', '').') = '.number_format($array_pogr[$i]['t'], 2, '.', '').'; dt ('.number_format($array_pogr[$i]['t'], 2, '.', '').') < Допуст. Погр.('.$pogr.')';
-        
-        
-        $sql_add = pg_query('INSERT INTO fault_inc(numb, date_time, plc_id, param, view_stat, comments) VALUES (' . $type_error . ', \'' . $date_b . '\', ' . $array_pogr[$i]['plc_id'] . ', \'\', 0, \'' . $text_error . '\')');
+
+        switch ($array_pogr[$i]['error']) {
+            case 0:
+                $text_error = 't2 (' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') > t1 (' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ')';
+                $mini_error = 't2 (' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') > t1 (' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ')';
+
+                break;
+            case 1:
+
+                if ($array_pogr[$i]['t1'] == 0) {
+                    $text_error = 't1 (' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ') = 0';
+                    $mini_error = 't1 (' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ') = 0';
+                } else {
+                    $text_error = 't2 (' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') = 0';
+                    $mini_error = 't2 (' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') = 0';
+                }
+
+                break;
+            case 2:
+                if ($array_pogr[$i]['t1'] > 120) {
+                    $text_error = 't1 (' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ') > 120';
+                    $mini_error = 't1 (' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ') > 120';
+                } else {
+                    $text_error = 't2 (' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') > 120';
+                    $mini_error = 't2 (' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') > 120';
+                }
+                break;
+            case 3:
+                $text_error = 'dt => Подача (t1: ' . number_format($array_pogr[$i]['t1'], 2, '.', '') . ') -  Обратка (t2: ' . number_format($array_pogr[$i]['t2'], 2, '.', '') . ') = ' . number_format($array_pogr[$i]['t'], 2, '.', '') . ';<br> dt (' . number_format($array_pogr[$i]['t'], 2, '.', '') . ') < Допуст. Погр.(' . $pogr . ')';
+                $mini_error = 'dt (' . number_format($array_pogr[$i]['t'], 2, '.', '') . ') < Допуст. Погр.(' . $pogr . ')';
+
+                break;
+
+        }
+
+
+
+
+        $sql_add = pg_query('INSERT INTO fault_inc(numb, date_time, plc_id, param, view_stat, comments) VALUES (' . $type_error . ', \'' . $date_b . '\', ' . $array_pogr[$i]['plc_id'] . ', \'' . $mini_error . '\', 0, \'' . $text_error . '\')');
         $id_list[] = $array_pogr[$i]['plc_id'];
     }
 
@@ -293,5 +469,5 @@ echo "</tbody></table>";
 
 
 $sql = pg_query('UPDATE fault_cnt SET date_time=\'' . date('Y-m-d H:i:00') . '\' WHERE id=2');
-$i=0;
+$i = 0;
 ?>

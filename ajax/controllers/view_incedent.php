@@ -248,12 +248,25 @@ while ($row_date = pg_fetch_row($sql_date)) {
             if (strtotime($row_date[0]) == strtotime($_POST['date'])) {
                 $pkey = array_search($arr_arch[$key]['res_id'], $p);
                 if ($pkey !== false) {
-                    echo "<td class='danger'>" . number_format($arr_arch[$key]['value'], 3, ",", "") . "</td>";
+                    if ($arr_arch[$key]['value'] != 'NaN') {
+                        echo "<td class='danger'>" . number_format($arr_arch[$key]['value'], 3, ",", "") . "</td>";
+                    } else {
+                        echo "<td class='danger'>NaN</td>";
+                    }
                 } else {
-                    echo "<td>" . number_format($arr_arch[$key]['value'], 3, ",", "") . "</td>";
+
+                    if ($arr_arch[$key]['value'] != 'NaN') {
+                        echo "<td>" . number_format($arr_arch[$key]['value'], 3, ",", "") . "</td>";
+                    } else {
+                        echo "<td>NaN</td>";
+                    }
                 }
             } else {
-                echo "<td>" . number_format($arr_arch[$key]['value'], 3, ",", "") . "</td>";
+                if ($arr_arch[$key]['value'] != 'NaN') {
+                    echo "<td>" . number_format($arr_arch[$key]['value'], 3, ",", "") . "</td>";
+                } else {
+                    echo "<td>NaN</td>";
+                }
             }
         } else {
             echo "<td>—</td>";

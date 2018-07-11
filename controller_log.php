@@ -7,7 +7,8 @@ $sql_inc = pg_query('SELECT
   public.fault_inc.date_time,
   public.fault_inc.view_stat,
   public.fault_inc.comments,
-  public.fault_cnt.name
+  public.fault_cnt.name,
+  public.fault_inc.user_comment
 FROM
   public.fault_cnt
   INNER JOIN public.fault_inc ON (public.fault_cnt.id = public.fault_inc.numb)
