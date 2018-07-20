@@ -183,6 +183,24 @@ crossorigin="anonymous"></script>
 
         prp_data_refresh(plc_id);
 
+        $(document).on('click', '.btn-save-fias', function () {
+            var fias = $('#fias').val();
+            var cdog = $('#cdog').val();
+
+            $.ajax({
+                type: 'POST',
+                chashe: false,
+                url: 'ajax/fias_prop/fias_add_data.php',
+                data: {fias: fias, cdog: cdog, plc: plc_id},
+                success: function (html) {
+                    alert(html);
+                }
+            });
+
+            return false;
+        });
+
+
         $(document).on('click', '.btn-save-prop', function () {
             var i = 0;
             var jsonObj = [];

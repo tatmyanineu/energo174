@@ -37,6 +37,6 @@ if (pg_num_rows($sql) > 0) {
 
 echo '<div class="row" style="margin-bottom:  20px;">
           <div class="col-lg-3 col-lg-offset-3 col-md-3 col-md-offset-3 col-xs-12">
-            <button class="btn btn-primary btn-lg">Сохранить</button>
+            <button class="btn btn-primary btn-save-fias btn-lg">Сохранить</button>
           </div> 
       </div>';
