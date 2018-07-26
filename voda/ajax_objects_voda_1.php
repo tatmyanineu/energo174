@@ -6,13 +6,16 @@
  * and open the template in the editor.
  */
 
-include 'db_config.php';
+include '../db_config.php';
 $date = date('Y-m-d');
 session_start();
+unset($_SESSION['file_name']);
+
 
 $date1 = $_POST['date1'];
 $date2 = $_POST['date2'];
 $date_now = date("d", strtotime($date2));
+
 if ($date_now == 20) {
     $date1 = date("Y-m-d", strtotime("+1 day", strtotime($date1)));
 //$date2 = $_GET['data2'];
@@ -23,14 +26,21 @@ if ($date_now == 20) {
 //$date2 = $_GET['data2'];
     $date2 = date("Y-m-d", strtotime("+0 day", strtotime($date2)));
 }
-$id = $_POST['id'];
+
+$id_dist = $_POST['id_distinct'];
+
+
+echo "<h2 class='text-center'>Вывод данных с " . date("d.m.Y", strtotime($date2)) . " по " . date("d.m.Y", strtotime($date1)) . "</h2>";
+
+
 
 $sql_name_object = pg_query('SELECT DISTINCT 
   "Tepl"."Places_cnt"."Name",
   "Tepl"."Places_cnt".plc_id,
   "Tepl"."PropPlc_cnt"."ValueProp",
   "PropPlc_cnt1"."ValueProp",
-  "Places_cnt1".plc_id
+  "Places_cnt1".plc_id,
+  public.fortum_places_cnt.frt_plc
 FROM
   "Tepl"."User_cnt"
   INNER JOIN "Tepl"."GroupToUserRelations" ON ("Tepl"."User_cnt".usr_id = "Tepl"."GroupToUserRelations".usr_id)
@@ -40,27 +50,30 @@ FROM
   INNER JOIN "Tepl"."Places_cnt" "Places_cnt2" ON ("Places_cnt1".place_id = "Places_cnt2".plc_id)
   INNER JOIN "Tepl"."PropPlc_cnt" "PropPlc_cnt1" ON ("Tepl"."Places_cnt".plc_id = "PropPlc_cnt1".plc_id)
   INNER JOIN "Tepl"."PropPlc_cnt" ON ("Tepl"."Places_cnt".plc_id = "Tepl"."PropPlc_cnt".plc_id)
+  INNER JOIN public.fortum_places_cnt ON ("Tepl"."Places_cnt".plc_id = public.fortum_places_cnt.plc_id)
 WHERE
   "Tepl"."PropPlc_cnt".prop_id = 27 AND 
   "PropPlc_cnt1".prop_id = 26 AND 
-  "Tepl"."User_cnt"."Login" = \'revis\'
+  "Tepl"."User_cnt"."Login" = \'' . $_SESSION['login'] . '\' AND 
+  "Tepl"."User_cnt"."Password" = \'' . $_SESSION['password'] . '\'
 ORDER BY
   "Tepl"."PropPlc_cnt"."ValueProp",
   "PropPlc_cnt1"."ValueProp",
-  "Tepl"."Places_cnt"."Name"');
+  "Tepl"."Places_cnt"."Name"
+
+');
 
 while ($row_name_object = pg_fetch_row($sql_name_object)) {
     $object_info[] = array(
         'plc_id' => $row_name_object[1],
         'name' => $row_name_object[0],
         'addres' => '' . $row_name_object[2] . ' ' . $row_name_object[3] . '',
-        'id_distinct' => $row_name_object[4]
+        'id_distinct' => $row_name_object[4],
+        'street' => $row_name_object[2],
+        'house' => $row_name_object[3],
+        'house_id' => $row_name_object[5]
     );
 }
-
-//for ($i = 0; $i < count($object_info); $i++) {
-//    echo $object_info[$i]['plc_id'] . " " . $object_info[$i]['name'] . " " . $object_info[$i]['addres'] . "<br>";
-//}
 
 $sql_number_sens = pg_query('SELECT DISTINCT 
   "Tepl"."ParamResPlc_cnt".prp_id,
@@ -97,10 +110,13 @@ FROM
   LEFT OUTER JOIN "Tepl"."Sensor_cnt" ON ("Tepl"."ParamResPlc_cnt".prp_id = "Tepl"."Sensor_cnt".prp_id)
   FULL OUTER JOIN "Tepl"."TypeSensor" ON ("Tepl"."Sensor_cnt".sen_id = "Tepl"."TypeSensor".sen_id)
 WHERE
-    "Tepl"."User_cnt".usr_id = ' . $id . '
+  "Tepl"."User_cnt"."Login" = \'' . $_SESSION['login'] . '\' AND 
+  "Tepl"."User_cnt"."Password" = \'' . $_SESSION['password'] . '\'
 ORDER BY
   "Tepl"."ParametrResourse"."Name",
-  "Tepl"."Resourse_cnt"."Name"');
+  "Tepl"."Resourse_cnt"."Name"
+
+');
 
 while ($row_param = pg_fetch_row($sql_parametr)) {
     $param_info[] = array(
@@ -113,11 +129,7 @@ while ($row_param = pg_fetch_row($sql_parametr)) {
 }
 
 
-
-
-
-$sql_archive1 = pg_query('
-SELECT DISTINCT 
+$sql_archive1 = pg_query('SELECT DISTINCT 
   "Tepl"."Arhiv_cnt"."DateValue",
   "Tepl"."Places_cnt".plc_id,
   "Tepl"."ParamResPlc_cnt"."ParamRes_id",
@@ -131,19 +143,21 @@ FROM
   INNER JOIN "Tepl"."Places_cnt" ON ("Tepl"."ParamResPlc_cnt".plc_id = "Tepl"."Places_cnt".plc_id)
   INNER JOIN "Tepl"."Arhiv_cnt" ON ("Tepl"."ParamResPlc_cnt".prp_id = "Tepl"."Arhiv_cnt".pr_id)
 WHERE
-  "Tepl"."User_cnt".usr_id = ' . $id . ' AND 
+  "Tepl"."User_cnt"."Login" = \'' . $_SESSION['login'] . '\' AND 
+  "Tepl"."User_cnt"."Password" = \'' . $_SESSION['password'] . '\' AND 
   "Tepl"."Arhiv_cnt".typ_arh = 2 AND 
   "Tepl"."Arhiv_cnt"."DateValue" >= \'' . $date1 . '\'  AND 
   "Tepl"."Arhiv_cnt"."DateValue" <= \'' . $date2 . '\' 
 ORDER BY
   "Tepl"."Places_cnt".plc_id,
   "Tepl"."ParamResPlc_cnt".prp_id
+
 ');
 $z = 0;
 $g = 0;
 while ($result = pg_fetch_row($sql_archive1)) {
-    if($result[3]=='NaN'){
-        $result[3]=0;
+    if ($result[3] == 'NaN') {
+        $result[3] = 0;
     }
     $archive[$z] = array(
         'plc_id' => $result[1],
@@ -155,12 +169,12 @@ while ($result = pg_fetch_row($sql_archive1)) {
     if ($z != 0) {
         if ($archive[$z]['prp_id'] != $archive[$z - 1]['prp_id']) {
 
-            
+
 
             $vnr = (strtotime($archive[$z - 1]['date']) - strtotime($d1)) / (60 * 60);
             $raz = $archive[$z - 1]['value'] - $v1;
-            if($raz == $archive[$z - 1]['value']){
-                $raz =0;
+            if ($raz == $archive[$z - 1]['value']) {
+                $raz = 0;
             }
             $voda[$g] = array(
                 'plc_id' => $archive[$z - 1]['plc_id'],
@@ -222,7 +236,10 @@ for ($i = 0; $i < count($voda); $i++) {
             'value2' => $voda[$i]['value2'],
             'vnr' => $voda[$i]['vnr'],
             'raz' => $voda[$i]['raz'],
-            'prp_id' => $voda[$i]['prp_id']
+            'prp_id' => $voda[$i]['prp_id'],
+            'house' => $object_info[$key]['house'],
+            'street' => $object_info[$key]['street'],
+            'house_id' => $object_info[$key]['house_id']
         );
     }
 }
@@ -242,7 +259,10 @@ for ($i = 0; $i < count($object_info); $i++) {
             'value2' => 0,
             'vnr' => '-',
             'raz' => '-',
-            'prp_id' => 0
+            'prp_id' => 0,
+            'house' => $object_info[$i]['house'],
+            'street' => $object_info[$i]['street'],
+            'house_id' => $object_info[$i]['house_id']
         );
     }
 }
@@ -287,7 +307,7 @@ for ($i = 0; $i < count($array); $i++) {
                     'id_dist' => $array[$i]['id_dist'],
                     'prp_id' => $array[$i]['prp_id'],
                     'param_id' => $array[$i]['param_id'],
-                    'date'=>$array[$i]['date1'] . ' '.$array[$i]['date2'],
+                    'date' => $array[$i]['date1'] . ' ' . $array[$i]['date2'],
                     'value1' => $array[$i]['value1'],
                     'value2' => $array[$i]['value2'],
                     'raznost' => $array[$i]['raz'],
@@ -297,7 +317,12 @@ for ($i = 0; $i < count($array); $i++) {
                     'com_sens' => $param_info[$key]['com_sens'],
                     'number_sens' => $number_sens[$key_number]['number'],
                     'vnr' => $array[$i]['vnr'],
-                    'ticket' => $ticket[$tick_key]['tick_id']
+                    'ticket' => $ticket[$tick_key]['tick_id'],
+                    'house' => $array[$i]['house'],
+                    'street' => $array[$i]['street'],
+                    'house_id' => $array[$i]['house_id'],
+                    'date1' => $array[$i]['date1'],
+                    'date2' => $array[$i]['date2']
                 );
             } else {
                 $array_all[] = array(
@@ -307,7 +332,7 @@ for ($i = 0; $i < count($array); $i++) {
                     'id_dist' => $array[$i]['id_dist'],
                     'prp_id' => $array[$i]['prp_id'],
                     'param_id' => $array[$i]['param_id'],
-                    'date'=>$array[$i]['date1'] . ' '.$array[$i]['date2'],
+                    'date' => $array[$i]['date1'] . ' ' . $array[$i]['date2'],
                     'value1' => $array[$i]['value1'],
                     'value2' => $array[$i]['value2'],
                     'raznost' => $array[$i]['raz'],
@@ -317,7 +342,12 @@ for ($i = 0; $i < count($array); $i++) {
                     'com_sens' => $param_info[$key]['com_sens'],
                     'number_sens' => $number_sens[$key_number]['number'],
                     'vnr' => $array[$i]['vnr'],
-                    'ticket' => ''
+                    'ticket' => '',
+                    'house' => $array[$i]['house'],
+                    'street' => $array[$i]['street'],
+                    'house_id' => $array[$i]['house_id'],
+                    'date1' => $array[$i]['date1'],
+                    'date2' => $array[$i]['date2']
                 );
             }
         }
@@ -332,7 +362,7 @@ for ($i = 0; $i < count($array); $i++) {
                     'id_dist' => $array[$i]['id_dist'],
                     'prp_id' => $array[$i]['prp_id'],
                     'param_id' => $array[$i]['param_id'],
-                    'date'=>$array[$i]['date1'] . ' '.$array[$i]['date2'],
+                    'date' => $array[$i]['date1'] . ' ' . $array[$i]['date2'],
                     'value1' => $array[$i]['value1'],
                     'value2' => $array[$i]['value2'],
                     'raznost' => $array[$i]['raz'],
@@ -342,7 +372,12 @@ for ($i = 0; $i < count($array); $i++) {
                     'com_sens' => $param_info[$key]['com_sens'],
                     'number_sens' => '-',
                     'vnr' => $array[$i]['vnr'],
-                    'ticket' => $ticket[$tick_key]['tick_id']
+                    'ticket' => $ticket[$tick_key]['tick_id'],
+                    'house' => $array[$i]['house'],
+                    'street' => $array[$i]['street'],
+                    'house_id' => $array[$i]['house_id'],
+                    'date1' => $array[$i]['date1'],
+                    'date2' => $array[$i]['date2']
                 );
             } else {
                 $array_all[] = array(
@@ -352,7 +387,7 @@ for ($i = 0; $i < count($array); $i++) {
                     'id_dist' => $array[$i]['id_dist'],
                     'prp_id' => $array[$i]['prp_id'],
                     'param_id' => $array[$i]['param_id'],
-                    'date'=>$array[$i]['date1'] . ' '.$array[$i]['date2'],
+                    'date' => $array[$i]['date1'] . ' ' . $array[$i]['date2'],
                     'value1' => $array[$i]['value1'],
                     'value2' => $array[$i]['value2'],
                     'raznost' => $array[$i]['raz'],
@@ -362,7 +397,12 @@ for ($i = 0; $i < count($array); $i++) {
                     'com_sens' => $param_info[$key]['com_sens'],
                     'number_sens' => '-',
                     'vnr' => $array[$i]['vnr'],
-                    'ticket' => ''
+                    'ticket' => '',
+                    'house' => $array[$i]['house'],
+                    'street' => $array[$i]['street'],
+                    'house_id' => $array[$i]['house_id'],
+                    'date1' => $array[$i]['date1'],
+                    'date2' => $array[$i]['date2']
                 );
             }
         }
@@ -378,7 +418,7 @@ for ($i = 0; $i < count($array); $i++) {
                 'id_dist' => $array[$i]['id_dist'],
                 'prp_id' => $array[$i]['prp_id'],
                 'param_id' => $array[$i]['param_id'],
-                'date'=>$array[$i]['date1'] . ' '.$array[$i]['date2'],
+                'date' => $array[$i]['date1'] . ' ' . $array[$i]['date2'],
                 'value1' => $array[$i]['value1'],
                 'value2' => $array[$i]['value2'],
                 'raznost' => $array[$i]['raz'],
@@ -388,7 +428,12 @@ for ($i = 0; $i < count($array); $i++) {
                 'com_sens' => '',
                 'number_sens' => '-',
                 'vnr' => $array[$i]['vnr'],
-                'ticket' => $ticket[$tick_key]['tick_id']
+                'ticket' => $ticket[$tick_key]['tick_id'],
+                'house' => $array[$i]['house'],
+                'street' => $array[$i]['street'],
+                'house_id' => $array[$i]['house_id'],
+                'date1' => $array[$i]['date1'],
+                'date2' => $array[$i]['date2']
             );
         } else {
             $array_all[] = array(
@@ -398,7 +443,7 @@ for ($i = 0; $i < count($array); $i++) {
                 'id_dist' => $array[$i]['id_dist'],
                 'prp_id' => $array[$i]['prp_id'],
                 'param_id' => $array[$i]['param_id'],
-                'date'=>$array[$i]['date1'] . ' '.$array[$i]['date2'],
+                'date' => $array[$i]['date1'] . ' ' . $array[$i]['date2'],
                 'value1' => $array[$i]['value1'],
                 'value2' => $array[$i]['value2'],
                 'raznost' => $array[$i]['raz'],
@@ -408,7 +453,12 @@ for ($i = 0; $i < count($array); $i++) {
                 'com_sens' => '',
                 'number_sens' => '-',
                 'vnr' => $array[$i]['vnr'],
-                'ticket' => ''
+                'ticket' => '',
+                'house' => $array[$i]['house'],
+                'street' => $array[$i]['street'],
+                'house_id' => $array[$i]['house_id'],
+                'date1' => $array[$i]['date1'],
+                'date2' => $array[$i]['date2']
             );
         }
     }
@@ -463,9 +513,9 @@ function view_td($j, $res, $name, $array_all, $id) {
     $z = 0;
     $summ = 0;
     for ($i = $j; $i < count($array_all); $i++) {
-        if ($array_all[$i]['name'] == $name and $array_all[$i]['plc_id']==$id) {
+        if ($array_all[$i]['name'] == $name and $array_all[$i]['plc_id'] == $id) {
             if ($res == $array_all[$i]['name_res']) {
-                $summ+=$array_all[$i]['raznost'];
+                $summ += $array_all[$i]['raznost'];
                 $z++;
             }
         }
@@ -488,7 +538,7 @@ if ($id_dist == 0) {
                 //$kol++;
                 echo "<tr>"
                 . "<td rowspan='" . $kol . "'>" . $n . "</td>"
-                . "<td rowspan='" . $kol . "'><a  href='#' class='go_object' id='".$array_all[$i]['plc_id']."'>" . $array_all[$i]['name'] . "</a></td>"
+                . "<td rowspan='" . $kol . "'><a  href='#' class='go_object' id='" . $array_all[$i]['plc_id'] . "'>" . $array_all[$i]['name'] . "</a></td>"
                 . "<td rowspan='" . $kol . "'>" . $array_all[$i]['addres'] . "</td>";
                 $kol2 = 1;
 
@@ -501,7 +551,7 @@ if ($id_dist == 0) {
                     if ($array_all[$i]['plc_id'] == $array_all[$j]['plc_id']) {
 
                         if ($array_all[$j]['ticket'] > 0) {
-                            $tickets = "<a href='#' class='go_ticket' id='".$array_all[$i]['plc_id']."'><span class='glyphicon glyphicon-wrench'></span></a>";
+                            $tickets = "<a href='#' class='go_ticket' id='" . $array_all[$i]['plc_id'] . "'><span class='glyphicon glyphicon-wrench'></span></a>";
                         } else {
                             $tickets = "";
                         }
@@ -555,16 +605,16 @@ if ($id_dist == 0) {
             } else {
 
                 if ($array_all[$i]['ticket'] > 0) {
-                    $tickets = "<a href='#' class='go_ticket' id='".$array_all[$i]['plc_id']."'><span class='glyphicon glyphicon-wrench'></span></a>";
+                    $tickets = "<a href='#' class='go_ticket' id='" . $array_all[$i]['plc_id'] . "'><span class='glyphicon glyphicon-wrench'></span></a>";
                 } else {
                     $tickets = "";
                 }
                 $n++;
                 echo "<tr>"
                 . "<td rowspan='" . $kol . "'>" . $n . "</td>"
-                . "<td rowspan='" . $kol . "'><a  href='#' class='go_object' id='".$array_all[$i]['plc_id']."'>" . $array_all[$i]['name'] . "</a></td>"
+                . "<td rowspan='" . $kol . "'><a  href='#' class='go_object' id='" . $array_all[$i]['plc_id'] . "'>" . $array_all[$i]['name'] . "</a></td>"
                 . "<td rowspan='" . $kol . "'>" . $array_all[$i]['addres'] . "</td>"
-                . "<td>" . $array_all[$i]['number_sens']. "</td>"
+                . "<td>" . $array_all[$i]['number_sens'] . "</td>"
                 . "<td>" . $array_all[$i]['name_res'] . "</td>"
                 . "<td>" . $array_all[$i]['com_sens'] . "</td>"
                 . "<td>" . number_format($array_all[$i]['value1'], 2, ',', ' ') . "</td>"
@@ -577,5 +627,258 @@ if ($id_dist == 0) {
             }
         }
     }
+} else {
+    for ($i = 0; $i < count($array_all); $i++) {
+
+        if ($array_all[$i]['id_dist'] == $id_dist) {
+            if ($array_all[$i]['plc_id'] == $array_all[$i + 1]['plc_id']) {
+                $kol++;
+            }
+            if ($array_all[$i]['plc_id'] != $array_all[$i + 1]['plc_id']) {
+                if ($kol > 1) {
+                    $n++;
+                    //$kol++;
+                    echo "<tr>"
+                    . "<td rowspan='" . $kol . "'>" . $n . "</td>"
+                    . "<td rowspan='" . $kol . "'><a  href='#' class='go_object' id='" . $array_all[$i]['plc_id'] . "'>" . $array_all[$i]['name'] . "</a></td>"
+                    . "<td rowspan='" . $kol . "'>" . $array_all[$i]['addres'] . "</td>";
+                    $kol2 = 1;
+
+
+
+
+                    $z = 0;
+                    for ($j = 0; $j < count($array_all); $j++) {
+
+                        if ($array_all[$i]['plc_id'] == $array_all[$j]['plc_id']) {
+
+                            if ($array_all[$j]['ticket'] > 0) {
+                                $tickets = "<a href='#' class='go_ticket' id='" . $array_all[$i]['plc_id'] . "'><span class='glyphicon glyphicon-wrench'></span></a>";
+                            } else {
+                                $tickets = "";
+                            }
+
+                            if ($z == 0) {
+                                $res = $array_all[$j]['name_res'];
+                                $name = $array_all[$j]['name'];
+                                $id = $array_all[$j]['plc_id'];
+                                echo "<td>" . $array_all[$j]['number_sens'] . "</td>"
+                                . "<td>" . $array_all[$j]['name_res'] . "</td>"
+                                . "<td>" . $array_all[$j]['com_sens'] . "</td>"
+                                . "<td>" . number_format($array_all[$j]['value1'], 2, ',', ' ') . "</td>"
+                                . "<td>" . number_format($array_all[$j]['value2'], 2, ',', ' ') . "</td>"
+                                . "<td>" . number_format($array_all[$j]['raznost'], 2, ',', ' ') . "</td>";
+
+                                view_td($j, $res, $name, $array_all, $id);
+                                echo "<td>" . $array_all[$j]['vnr'] . "</td>"
+                                . "<td rowspan='" . $kol . "'>" . $tickets . "</td>";
+                                echo "</tr>";
+                            } elseif ($res != $array_all[$j]['name_res']) {
+                                $res = $array_all[$j]['name_res'];
+                                $name = $array_all[$j]['name'];
+                                $id = $array_all[$j]['plc_id'];
+
+                                echo "<td>" . $array_all[$j]['number_sens'] . "</td>"
+                                . "<td>" . $array_all[$j]['name_res'] . "</td>"
+                                . "<td>" . $array_all[$j]['com_sens'] . "</td>"
+                                . "<td>" . number_format($array_all[$j]['value1'], 2, ',', ' ') . "</td>"
+                                . "<td>" . number_format($array_all[$j]['value2'], 2, ',', ' ') . "</td>"
+                                . "<td>" . number_format($array_all[$j]['raznost'], 2, ',', ' ') . "</td>";
+
+                                view_td($j, $res, $name, $array_all, $id);
+                                echo "<td>" . $array_all[$j]['vnr'] . "</td>";
+                                echo "</tr>";
+                            } else {
+                                echo "<td>" . $array_all[$j]['number_sens'] . "</td>"
+                                . "<td>" . $array_all[$j]['name_res'] . "</td>"
+                                . "<td>" . $array_all[$j]['com_sens'] . "</td>"
+                                . "<td>" . number_format($array_all[$j]['value1'], 2, ',', ' ') . "</td>"
+                                . "<td>" . number_format($array_all[$j]['value2'], 2, ',', ' ') . "</td>"
+                                . "<td>" . number_format($array_all[$j]['raznost'], 2, ',', ' ') . "</td>";
+                                echo "<td>" . $array_all[$j]['vnr'] . "</td>";
+                                echo "</tr>";
+                            }
+                            $z++;
+                        }
+                    }
+
+                    //echo "</tr>";
+                    $kol = 1;
+                } else {
+
+                    if ($array_all[$i]['ticket'] > 0) {
+                        $tickets = "<a href='#' class='go_ticket' id='" . $array_all[$i]['plc_id'] . "'><span class='glyphicon glyphicon-wrench'></span></a>";
+                    } else {
+                        $tickets = "";
+                    }
+                    $n++;
+                    echo "<tr>"
+                    . "<td rowspan='" . $kol . "'>" . $n . "</td>"
+                    . "<td rowspan='" . $kol . "'><a  href='#' class='go_object' id='" . $array_all[$i]['plc_id'] . "'>" . $array_all[$i]['name'] . "</a></td>"
+                    . "<td rowspan='" . $kol . "'>" . $array_all[$i]['addres'] . "</td>"
+                    . "<td>" . $array_all[$i]['number_sens'] . "</td>"
+                    . "<td>" . $array_all[$i]['name_res'] . "</td>"
+                    . "<td>" . $array_all[$i]['com_sens'] . "</td>"
+                    . "<td>" . number_format($array_all[$i]['value1'], 2, ',', ' ') . "</td>"
+                    . "<td>" . number_format($array_all[$i]['value2'], 2, ',', ' ') . "</td>"
+                    . "<td>" . number_format($array_all[$i]['raznost'], 2, ',', ' ') . "</td>"
+                    . "<td>" . number_format($array_all[$i]['raznost'], 2, ',', ' ') . "</td>"
+                    . "<td>" . $array_all[$i]['vnr'] . "</td>"
+                    . "<td>" . $tickets . "</td>"
+                    . "</tr>";
+                }
+            }
+        }
+    }
 }
 echo '</tbody></table>';
+
+//var_dump($array_all);
+
+$sql_fias = pg_query('SELECT * FROM fias_cnt');
+while ($row = pg_fetch_row($sql_fias)) {
+    $f[] = array(
+        'plc_id' => $row[2],
+        'fias' => $row[1],
+        'cdog' => $row[3]
+    );
+}
+
+
+$sql_prop = pg_query('SELECT * FROM prop_connect');
+while ($row = pg_fetch_row($sql_prop)) {
+    $p[] = array(
+        'prp' => $row[1],
+        'id_con' => $row[2],
+        'numb' => $row[4]
+    );
+}
+
+
+$def = array(
+    array("HOUSE_ID", "C", 16),
+    array("HOUSE_FIAS", "C", 36),
+    array("STNAME", "C", 128),
+    array("H_NOMER", "C", 32),
+    array("DEVICE", "C", 16),
+    array("D_NOMER", "C", 32),
+    array("PREV_VOL", "N", 10, 0),
+    array("PREV_DATA", "D"),
+    array("CURR_VOL", "N", 10, 0),
+    array("CURR_DATA", "D"),
+    array("RASHOD", "N", 10, 0),
+    array("VOLUME1", "N", 15, 4),
+    array("VOLUME0", "N", 15, 4),
+    array("ER_CODE", "N", 10, 0),
+    array("ER_NAME", "C", 128),
+    array("ER_INFO", "C", 128),
+    array("CONTRACTID", "C", 11),
+    array("KV", "C", 32),
+    array("PLACE", "C", 32)
+);
+
+
+$dbf_name = "export/report_" . $date2 . "_" . $date1 . ".dbf";
+$_SESSION['file_name'] = $dbf_name;
+unlink($dbf_name);
+if (!dbase_create($dbf_name, $def)) {
+    die("Error, can't create the database");
+}
+
+$dbf = dbase_open($dbf_name, 2);
+
+if ($id_dist == 0) {
+    for ($i = 0; $i < count($array_all); $i++) {
+
+        $k = array_search($array_all[$i]['plc_id'], array_column($f, 'plc_id'));
+        $plc = $array_all[$i]['plc_id'];
+        $name = $array_all[$i]['name'];
+        $adr = $array_all[$i]['addres'];
+        if ($k !== false) {
+            $fias_code = $f[$k]['fias'];
+            $dog = $f[$k]['cdog'];
+        } else {
+            $fias_code = "";
+            $dog = "";
+        }
+
+        $e = array_search($array_all[$i]['prp_id'], array_column($p, 'prp'));
+        if ($e !== false) {
+            $con = $p[$e]['id_con'];
+            $num = $p[$e]['numb'];
+            // $numb =;
+        } else {
+            $con = "";
+            $num = '' . $array_all[$i]['number_sens'];
+            //$numb =;
+        }
+
+        dbase_add_record($dbf, array(
+            iconv('UTF-8', 'CP866', $array_all[$i]['house_id']), //Идентификатор
+            iconv('UTF-8', 'CP866', $fias_code), //ФИАС код
+            iconv('UTF-8', 'CP866', $array_all[$i]['street']), // Улица
+            iconv('UTF-8', 'CP866', $array_all[$i]['house']), //Дом
+            iconv('UTF-8', 'CP866', $con), //ID счетчика в системе поставщика
+            iconv('UTF-8', 'CP866', $num), // заводской номер счечтика
+            iconv('UTF-8', 'CP866', $array_all[$i]['value1']), // Предыдущие показания
+            iconv('UTF-8', 'CP866', date('Ymd', strtotime($array_all[$i]['date1']))), // Дата снятия предыдущего показания
+            iconv('UTF-8', 'CP866', $array_all[$i]['value2']), // Текущие покзаания
+            iconv('UTF-8', 'CP866', date('Ymd', strtotime($array_all[$i]['date2']))), // Дата снятия текущий покзааний
+            iconv('UTF-8', 'CP866', $array_all[$i]['raznost']), // Расход
+            iconv('UTF-8', 'CP866', $array_all[$i]['value2']), // объем потребления по ИПУ
+            iconv('UTF-8', 'CP866', 0), // Объем потребления по нормативу
+            iconv('UTF-8', 'CP866', ''), // Код несправности
+            iconv('UTF-8', 'CP866', ''), // Описание неисправности
+            iconv('UTF-8', 'CP866', $array_all[$i]['ticket']), // Доп инфомрация об ошибке
+            iconv('UTF-8', 'CP866', $dog), //код договора
+            iconv('UTF-8', 'CP866', ''), // Диапазон квартир
+            iconv('UTF-8', 'CP866', $array_all[$i]['com_sens']) // место установки ПУ
+                )
+        );
+    }
+} else {
+    for ($i = 0; $i < count($array_all); $i++) {
+        if ($id_dist == $array_all[$i]['id_dist']) {
+            $k = array_search($array_all[$i]['plc_id'], array_column($f, 'plc_id'));
+            if ($k !== false) {
+                $fias_code = $f[$k]['fias'];
+                $dog = $f[$k]['cdog'];
+            } else {
+                $fias_code = "";
+                $dog = "";
+            }
+
+            $e = array_search($array_all[$i]['prp_id'], array_column($p, 'prp'));
+            if ($e !== false) {
+                $con = $p[$e]['id_con'];
+                // $numb =;
+            } else {
+                $con = "";
+                //$numb =;
+            }
+
+            dbase_add_record($dbf, array(
+                iconv('UTF-8', 'CP866', $array_all[$i]['house_id']), //Идентификатор
+                iconv('UTF-8', 'CP866', $fias_code), //ФИАС код
+                iconv('UTF-8', 'CP866', $array_all[$i]['street']), // Улица
+                iconv('UTF-8', 'CP866', $array_all[$i]['house']), //Дом
+                iconv('UTF-8', 'CP866', $con), //ID счетчика в системе поставщика
+                iconv('UTF-8', 'CP866', $array_all[$i]['number_sens']), // заводской номер счечтика
+                iconv('UTF-8', 'CP866', $array_all[$i]['value1']), // Предыдущие показания
+                iconv('UTF-8', 'CP866', date('Ymd', strtotime($array_all[$i]['date1']))), // Дата снятия предыдущего показания
+                iconv('UTF-8', 'CP866', $array_all[$i]['value2']), // Текущие покзаания
+                iconv('UTF-8', 'CP866', date('Ymd', strtotime($array_all[$i]['date2']))), // Дата снятия текущий покзааний
+                iconv('UTF-8', 'CP866', $array_all[$i]['raznost']), // Расход
+                iconv('UTF-8', 'CP866', $array_all[$i]['value2']), // объем потребления по ИПУ
+                iconv('UTF-8', 'CP866', 0), // Объем потребления по нормативу
+                iconv('UTF-8', 'CP866', ''), // Код несправности
+                iconv('UTF-8', 'CP866', ''), // Описание неисправности
+                iconv('UTF-8', 'CP866', $array_all[$i]['ticket']), // Доп инфомрация об ошибке
+                iconv('UTF-8', 'CP866', $dog), //код договора
+                iconv('UTF-8', 'CP866', ''), // Диапазон квартир
+                iconv('UTF-8', 'CP866', $array_all[$i]['com_sens']) // место установки ПУ
+                    )
+            );
+        }
+    }
+}

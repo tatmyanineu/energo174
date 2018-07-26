@@ -89,7 +89,7 @@ $main = array();
 
 $column['columns'] = array(
     array("title" => "№", "data" => "num"),
-    array("title" => "plc_id", "data" => "plc_id"),
+    array("title" => "plc_id", "data" => "plc"),
     array("title" => "Название", "data" => "name"),
     array("title" => "Район", "data" => "dist"),
     array("title" => "Адрес", "data" => "adr"),

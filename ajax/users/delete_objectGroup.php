@@ -11,3 +11,4 @@ session_start();
 
 $sql = pg_query('DELETE FROM "Tepl"."PlaceGroupRelations"
  WHERE plc_id = '.$_POST['plc_id'].' AND grp_id = '.$_POST['group_id'].'');
+$i++;

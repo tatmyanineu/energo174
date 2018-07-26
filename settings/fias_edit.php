@@ -157,7 +157,7 @@
                             data: json.data,
                             columnDefs: [
                                 {
-                                    targets: [1],
+                                    targets: [2],
                                     render: function (data, type, columns, meta) {
                                         data = "<a href='../object.php?id_object=" + columns.plc + "'>" + columns.name + "<a>";
                                         return data;
@@ -210,7 +210,7 @@
                             data: json.data,
                             columnDefs: [
                                 {
-                                    targets: [1],
+                                    targets: [2],
                                     render: function (data, type, columns, meta) {
                                         data = "<a href='../object.php?id_object=" + columns.plc + "'>" + columns.name + "<a>";
                                         return data;

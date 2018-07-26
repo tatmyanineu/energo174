@@ -42,7 +42,7 @@ session_start();
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a id="forBrand" href="#">Пользователь: <?php echo $_SESSION['login'];?></a></li>
+                            <li><a id="forBrand" href="#">Пользователь: <?php echo $_SESSION['login']; ?></a></li>
                             <li><a id="forBrand" href="index.php">Выход</a></li>
                         </ul>
 
@@ -57,7 +57,7 @@ session_start();
                     <?php include 'include/menu.php'; ?>
 
                     <ul class = "nav nav-sidebar">
-                       <li><a href="controller_param.php" class="toggle-vis" data-column="2"><span class=""></span> Параметры  </a></li>
+                        <li><a href="controller_param.php" class="toggle-vis" data-column="2"><span class=""></span> Параметры  </a></li>
                     </ul>
 
 
@@ -86,6 +86,7 @@ session_start();
                                         <thead><tr role="row">
                                                 <th>№</th>
                                                 <th>Название</th>
+                                                <th>Адрес</th>
                                                 <th>Тип проверки</th>
                                                 <th>Дата</th>
                                                 <th>Коментаций ошибки</th>
@@ -137,6 +138,7 @@ session_start();
                     columns: [
                         {data: "id", searchable: false},
                         {data: "name"},
+                        {data: "adr"},
                         {data: "incedent"},
                         {data: "date", searchable: false},
                         {data: "comment", searchable: false},

@@ -114,11 +114,11 @@ ORDER BY
                                             <div class="form-inline text-center" style="margin-bottom: 10px">
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>Нач. дата </span>
-                                                    <input type="text" class="form-control" id="datetimepicker1" value="21.04.2018">
+                                                    <input type="text" class="form-control" id="datetimepicker1" value="<?php echo $date1;?>">
                                                 </div>
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>Кон. дата </span>
-                                                    <input type="text" class="form-control" id="datetimepicker2" value="20.05.2018">
+                                                    <input type="text" class="form-control" id="datetimepicker2" value="<?php echo $date2; ?>">
                                                 </div>
                                             </div>
                                             <p>Выберите район</p>

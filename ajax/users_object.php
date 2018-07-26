@@ -43,7 +43,7 @@ FROM
   INNER JOIN "Tepl"."PropPlc_cnt" ON ("Tepl"."Places_cnt".plc_id = "Tepl"."PropPlc_cnt".plc_id)
   INNER JOIN "Tepl"."PropPlc_cnt" "PropPlc_cnt1" ON ("Tepl"."Places_cnt".plc_id = "PropPlc_cnt1".plc_id)
 WHERE
-  "Tepl"."PlaceGroupRelations".grp_id = 1 AND 
+  "Tepl"."PlaceGroupRelations".grp_id = ' . $_POST['group'] . ' AND 
   "Tepl"."PropPlc_cnt".prop_id = 27 AND 
   "PropPlc_cnt1".prop_id = 26 AND 
   "Tepl"."Places_cnt"."Name" ILIKE \'%' . $_POST['key'] . '%\'
