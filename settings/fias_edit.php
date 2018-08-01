@@ -20,6 +20,7 @@
         <script src="../modules/DataTables-1.10.16/jszip.min.js" type="text/javascript"></script>
         <link href="../modules/DataTables-1.10.16/buttons.dataTables.min.css" rel="stylesheet" type="text/css"/>
         <script src="../modules/DataTables-1.10.16/dataTables.bootstrap.min.js" type="text/javascript"></script>
+        
         <link href="../modules/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
         <script src="../modules/bootstrap-3.3.7-dist/js/bootstrap.js" type="text/javascript"></script>
 

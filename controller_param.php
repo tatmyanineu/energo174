@@ -64,13 +64,33 @@ include './db_config.php';
                                 <?php
                                 $style = ['panel-primary', 'panel-success', 'panel-info', 'panel-warning'];
 
-                                $sql_inc = pg_query('SELECT id, name, coeficient, date_time
+                                $sql_inc = pg_query('SELECT id, name, coeficient, date_time, type_arch, enabled
                                                      FROM fault_cnt');
-
+                                $arr = pg_fetch_all($sql_inc);
                                 while ($row = pg_fetch_row($sql_inc)) {
-                                    $i = rand(0, 3);
+                                    $j = rand(0, 3);
+                                    $arch = array(
+                                        '1' => 'Часовой',
+                                        '2' => 'Суточный',
+                                        '3' => 'Месячный'
+                                    );
+                                    $select = '<select id="type_' . $row[0] . '"  class="form-control get_archive">';
+                                    for ($i = 1; $i <= count($arch); $i++) {
+                                        if ($row[4] == $i) {
+                                            $select .= '<option value="' . $i . '" selected>' . $arch[$i] . '</option>';
+                                        } else {
+                                            $select .= '<option  value="' . $i . '">' . $arch[$i] . '</option>';
+                                        }
+                                    }
+                                    $select .= '</select>';
 
-                                    echo '<div class="panel ' . $style[$i] . '">'
+
+                                    if ($row[5] == "t") {
+                                        $input = ' <label><input type="checkbox" class="get_enabled" id="' . $row[0] . '" checked>Задание запущено</label>';
+                                    } else {
+                                        $input = ' <label><input type="checkbox" class="get_enabled" id="' . $row[0] . '">Задание запущено</label>';
+                                    }
+                                    echo '<div class="panel ' . $style[$j] . '">'
                                     . '<div class="panel-heading"><h4>' . $row[1] . '</h4></div>'
                                     . '<div class="panel-body">'
                                     . '<div class="row" style="margin-top: 20px;">'
@@ -80,6 +100,14 @@ include './db_config.php';
                                     . '<div class="row" style="margin-top: 20px;">'
                                     . '<div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Дата последнего выполнения</b></h4></div>'
                                     . '<div class="col-lg-4 col-md-4 col-xs-12"><h4>' . date('d.m.Y H:s:00', strtotime($row[3])) . '</h4></div>'
+                                    . '</div>'
+//                                    . '<div class="row" style="margin-top: 20px;">'
+//                                    . '<div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Тип архива</b></h4></div>'
+//                                    . '<div class="col-lg-4 col-md-4 col-xs-12">' . $select . '</div>'
+//                                    . '</div>'
+                                    . '<div class="row" style="margin-top: 20px;">'
+                                    . '<div class="col-lg-5 col-md-5 col-xs-12"><h4><b>Выполнять задачу</b></h4></div>'
+                                    . '<div class="col-lg-4 col-md-4 col-xs-12">' . $input . '</div>'
                                     . '</div>'
                                     . '</div>'
                                     . '</div>';
@@ -101,18 +129,42 @@ include './db_config.php';
 
                 $('#get_value_btn').click(function () {
                     var value = [];
+                    var type = [];
+                    var enabled = [];
                     $('.get_value').each(function () {
                         var elem = {id: this.id, val: $('#' + this.id).val()};
                         value.push(elem);
 
                     });
+
+                    $('.get_enabled').each(function () {
+                        if (this.checked) {
+                            var bol = {id: this.id, val: true};
+                        } else {
+                            var bol = {id: this.id, val: false};
+                        }
+
+                        enabled.push(bol);
+
+                    });
+
+//                    $('.get_archive').each(function () {
+//                        var n = this.id;
+//                        n = n.slice(5)
+//                        var elem = {id: n, val: $('#' + this.id).val()};
+//                        type.push(elem);
+//                    });
+
+                    console.log(type);
+                    console.log(enabled);
+                    console.log(value);
                     $.ajax({
                         type: 'POST',
                         chase: false,
                         url: 'ajax/controllers/rewrite_prop.php',
-                        data: {value: value},
+                        data: {value: value, enabled: enabled},
                         success: function (html) {
-
+                            
                         }
                     });
                     return false;
