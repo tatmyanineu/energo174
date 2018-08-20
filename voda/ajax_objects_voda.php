@@ -132,6 +132,8 @@ ORDER BY
 $archive = pg_fetch_all($sql_archive);
 $tr = false;
 for ($i = 0; $i < count($archive); $i++) {
+
+
     if ($i == 0) {
         $val[] = array(
             'date' => $archive[$i]['date'],
@@ -148,8 +150,8 @@ for ($i = 0; $i < count($archive); $i++) {
                 if (count($val) > 1) {
                     //echo $archive[$i]['plc_id'] . "<br>";
                     $pl = $archive[$i]['plc_id'];
-                    $data = voda($val, $_POST['date2']);
                     $k = array_search($archive[$i - 1]['plc_id'], array_column($plc, 'plc_id'));
+                    $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
                     if ($k !== FALSE) {
                         $main[] = array(
                             'plc_id' => $plc[$k]['plc_id'],
@@ -173,9 +175,8 @@ for ($i = 0; $i < count($archive); $i++) {
                     'date' => $archive[$i]['date'],
                     'value' => $archive[$i]['value']
                 );
-
-                $data = voda($val, $_POST['date2']);
                 $k = array_search($archive[$i]['plc_id'], array_column($plc, 'plc_id'));
+                $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
                 if ($k !== FALSE) {
                     $main[] = array(
                         'plc_id' => $plc[$k]['plc_id'],
@@ -203,8 +204,8 @@ for ($i = 0; $i < count($archive); $i++) {
                     $tr = false;
                 } else {
                     $pl = $archive[$i]['plc_id'];
-                    $data = voda($val, $_POST['date2']);
                     $k = array_search($archive[$i - 1]['plc_id'], array_column($plc, 'plc_id'));
+                    $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
                     if ($k !== FALSE) {
                         $main[] = array(
                             'plc_id' => $plc[$k]['plc_id'],
@@ -238,9 +239,8 @@ for ($i = 0; $i < count($archive); $i++) {
             'date' => $archive[$i]['date'],
             'value' => $archive[$i]['value']
         );
-
-        $data = voda($val, $_POST['date2']);
         $k = array_search($archive[$i - 1]['plc_id'], array_column($plc, 'plc_id'));
+        $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
         if ($k !== FALSE) {
             $main[] = array(
                 'plc_id' => $plc[$k]['plc_id'],
@@ -333,22 +333,36 @@ for ($i = 0; $i < count($main); $i++) {
 }
 echo '</table>';
 
-function voda($array, $post_date) {
+function voda($array, $post_date, $plc) {
+    if ($plc == 99) {
+        $asd++;
+    }
+    $nan = false;
     $data['v1'] = $array[0]['value'];
     $data['d1'] = $array[0]['date'];
     $data['v2'] = $array[count($array) - 1]['value'];
     $data['d2'] = $array[count($array) - 1]['date'];
+    $sum = 0;
     for ($i = 0; $i < count($array); $i++) {
+        if ($array[$i]['value'] == 'NaN') {
+            $data['error'] = '2';
+            $data['v1'] = 0;
+            $data['v2'] = 0;
+            $nan = true;
+            break;
+        }
         if ($i != 0) {
             $r = $array[$i]['value'] - $array[$i - 1]['value'];
             $sum += $r;
         }
     }
     $data['sum'] = $sum;
-    if (strtotime($data['d2']) != strtotime($post_date)) {
-        $data['error'] = '1';
-    } else {
-        $data['error'] = '0';
+    if ($nan == FALSE) {
+        if (strtotime($data['d2']) != strtotime($post_date)) {
+            $data['error'] = '1';
+        } else {
+            $data['error'] = '0';
+        }
     }
 
     return $data;
@@ -366,7 +380,7 @@ while ($row = pg_fetch_row($sql_fias)) {
 
 $sql_prop = pg_query('SELECT * FROM prop_connect');
 while ($row = pg_fetch_row($sql_prop)) {
-    $p[] = array(
+    $prop[] = array(
         'prp' => $row[1],
         'id_con' => $row[2],
         'numb' => $row[4]
@@ -407,10 +421,13 @@ $dbf = dbase_open($dbf_name, 2);
 
 for ($i = 0; $i < count($main); $i++) {
 
+    if ($main[$i]['plc_id'] == 99) {
+        $g++;
+    }
     $k = array_search($main[$i]['plc_id'], array_column($f, 'plc_id'));
     $plc = $main[$i]['plc_id'];
     $name = $main[$i]['name'];
-    $adr = $main[$i]['addres'];
+    $adr = $main[$i]['adr'];
     $house_id = 50000000 + $main[$i]['plc_id'];
     if ($k !== false) {
         $fias_code = $f[$k]['fias'];
@@ -420,10 +437,10 @@ for ($i = 0; $i < count($main); $i++) {
         $dog = "";
     }
 
-    $e = array_search($main[$i]['prp'], array_column($p, 'prp'));
+    $e = array_search($main[$i]['prp'], array_column($prop, 'prp'));
     if ($e !== false) {
-        $con = $p[$e]['id_con'];
-        $num = $p[$e]['numb'];
+        $con = $prop[$e]['id_con'];
+        $num = $prop[$e]['numb'];
         // $numb =;
     } else {
         $con = "";
@@ -431,20 +448,24 @@ for ($i = 0; $i < count($main); $i++) {
         //$numb =;
     }
 
-    $adr = explode(", ",$main[$i]['adr']);
-    
+    $adr = explode(", ", $main[$i]['adr']);
+
     switch ($main[$i]['error']) {
-          case 0:
+        case 0:
             $e = "";
             $t = "";
             break;
-          case 1:
+        case 1:
             $e = $main[$i]['error'];
             $t = "Не полный архив за период";
             break;
+        case 2:
+            $e = $main[$i]['error'];
+            $t = "NaN значения в архиве";
+            break;
         case 4:
             $e = $main[$i]['error'];
-            $t = "Коррекция покзааний";
+            $t = "Коррекция показаний";
             break;
         case 5:
             $e = $main[$i]['error'];
@@ -455,8 +476,8 @@ for ($i = 0; $i < count($main); $i++) {
     dbase_add_record($dbf, array(
         iconv('UTF-8', 'CP866', $house_id), //Идентификатор
         iconv('UTF-8', 'CP866', $fias_code), //ФИАС код
-        iconv('UTF-8', 'CP866', $main[$i]['street']), // Улица
-        iconv('UTF-8', 'CP866', $main[$i]['house']), //Дом
+        iconv('UTF-8', 'CP866', $adr[0]), // Улица
+        iconv('UTF-8', 'CP866', $adr[1]), //Дом
         iconv('UTF-8', 'CP866', $con), //ID счетчика в системе поставщика
         iconv('UTF-8', 'CP866', $num), // заводской номер счечтика
         iconv('UTF-8', 'CP866', $main[$i]['v1']), // Предыдущие показания
@@ -628,20 +649,20 @@ for ($i = 0; $i < count($main); $i++) {
 //}
 //unset($voda);
 //unset($archive);
-$sql_tickets_reports = pg_query('SELECT 
-  public.ticket.id,
-  public.ticket.plc_id,
-  public.ticket.date_ticket,
-  public.ticket.text_ticket,
-  public.ticket.status,
-  public.ticket.close_date,
-  public.ticket.close_text
-FROM
-  public.ticket
-WHERE
-  public.ticket.date_ticket >= \'' . $date1 . '\' AND 
-  public.ticket.date_ticket <= \'' . $date2 . '\' AND 
-  public.ticket.status > 2');
+//$sql_tickets_reports = pg_query('SELECT 
+//  public.ticket.id,
+//  public.ticket.plc_id,
+//  public.ticket.date_ticket,
+//  public.ticket.text_ticket,
+//  public.ticket.status,
+//  public.ticket.close_date,
+//  public.ticket.close_text
+//FROM
+//  public.ticket
+//WHERE
+//  public.ticket.date_ticket >= \'' . $date1 . '\' AND 
+//  public.ticket.date_ticket <= \'' . $date2 . '\' AND 
+//  public.ticket.status > 2');
 
 //$ticket = array();
 //while ($result = pg_fetch_row($sql_tickets_reports)) {

@@ -407,8 +407,9 @@ if (isset($_POST['submit'])) {
                 $sql_all_fp = pg_query('SELECT * FROM password_forgot where status =0');
                 $_SESSION['reports_passord'] = pg_num_rows($sql_all_fp);
             }
+            header('location: objects.php');
         }
-        header('location: objects.php');
+        $fall = 1;
         //echo $er;
     } else {
         $fall = 1;
@@ -468,14 +469,7 @@ if (isset($_POST['submit'])) {
                                 <br>
                                 <br>
                             </form>
-                            <?php
-                            if ($fall == 1) {
-                                echo "<h4>Не верное имя пользователя или пароль</h4>";
-                            }
-//echo '<pre>';
-//    print_r($_SESSION['main_form']);
-//    echo '</pre>';
-                            ?>
+
                         </div>
                         <div class="col-lg-6 col-md-6" style="margin-top: 20px; margin-left: 30px" >
 
@@ -489,6 +483,14 @@ if (isset($_POST['submit'])) {
                                 <div class="col-lg-8 col-md-8 " style="margin-left: -20px"><h4><i><a id="link_help" href="forgot_password.php">Заявка на восстановление пароля</a>  </i></h4></div>
                             </div>
                         </div>
+                    </div>
+                    <div>
+                        <?php
+                        if ($fall == 1) {
+                            echo "<h2>Не верное имя пользователя или пароль</h2>"
+                            . "<p>Если по какой либо причине вы не можете войти в личный кабинет внимательно проверьте раскладку клавиатуры и регистр букв вводимые вами.</p>";
+                        }
+                        ?>
                     </div>
                 </div>
             </div>

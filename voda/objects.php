@@ -251,7 +251,7 @@ ORDER BY
                         var date1 = $('#datetimepicker1').val();
                         var date2 = $('#datetimepicker2').val();
                         view_object(date1, date2, $('#district').val());
-                        history.pushState(null, null, '/pulsar_form/voda/objects.php?id_distinct=' + $('#district').val());
+//                        history.pushState(null, null, '/pulsar_form/voda/objects.php?id_distinct=' + $('#district').val());
                     });
 
 
