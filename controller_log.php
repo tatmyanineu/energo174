@@ -85,7 +85,7 @@ $name = pg_fetch_all($sql_name);
                 <!--Контент -->
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                     <h1 class="page-header">
-                        <div id="center_h1"> Режим диспетчера
+                        <div id="center_h1"> Режим диспетчера: <?php echo "<a href='object.php?id_object=" . $_GET[plc] . "&inc=" . $_GET['inc'] . "' >" . $name[0][Name] . "</a>";?>
                         </div>
                     </h1>
                     <div>

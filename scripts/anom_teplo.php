@@ -389,7 +389,7 @@ if ($data['enable'] == 't') {
         if ($k === false) {
 
             if ($array_pogr[$i]['e'] == 1) { // $m = (($m_n - $m2) / $m_n) * 100;
-                if ($m3 != '-') {
+                if ($array_pogr[$i]['m3'] != '-') {
                     $text_error = 'Погрешность => (((Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ') + Подача (m3: ' . number_format($array_pogr[$i]['m3'], 2, '.', '') . ')) - Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . '))/ Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ') + Подача (m3: ' . number_format($array_pogr[$i]['m3'], 2, '.', '') . ' ))*100 = ' . number_format($array_pogr[$i]['m'], 2, '.', '') . '; <br>Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
                     $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
                 } else {
@@ -397,7 +397,7 @@ if ($data['enable'] == 't') {
                     $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
                 }
             } else {
-                if ($m3 != '-') { // $m = (($m_n - $m2) / $m2) * 100;
+                if ($array_pogr[$i]['m3'] != '-') { // $m = (($m_n - $m2) / $m2) * 100;
                     $text_error = 'Погрешность => (((Подача (m1: ' . number_format($array_pogr[$i]['m1'], 2, '.', '') . ') + Подача (m3: ' . number_format($array_pogr[$i]['m3'], 2, '.', '') . ')) - Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . '))/ Обратка (m2: ' . number_format($array_pogr[$i]['m2'], 2, '.', '') . ' ))*100 = ' . number_format($array_pogr[$i]['m'], 2, '.', '') . '; <br>Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
                     $mini_error = 'Погреш. (' . number_format($array_pogr[$i]['m'], 2, '.', '') . ') > Допуст. Погр.(' . $pogr . ')';
                 } else {

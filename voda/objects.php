@@ -11,6 +11,10 @@ session_start();
 $date1 = date("Y-m-21", strtotime("-1 month"));
 $date2 = date("Y-m-20");
 
+//$date1 = date("2018-06-21");
+//$date2 = date("2018-07-20");
+
+
 if (isset($_SESSION['login']) and isset($_SESSION['password'])) {
 
     $sql_disitnct = pg_query('SELECT DISTINCT 
@@ -37,8 +41,33 @@ ORDER BY
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <meta http-equiv="Content-Style-Type" content="text/css"/>
 
+        <script
+            src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css">
         <link href="../css/style.css" rel="stylesheet" type="text/css"/>
-        <link rel="stylesheet" type="text/css" href="../css/bootstrap.css"/>
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+<!--        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css">-->
+
+
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <script src="../js/jquery.datetimepicker.js" type="text/javascript"></script>
+
+
+
+
         <link rel="stylesheet" type="text/css" href="../css/dashboard.css"/>
         <link href="../css/jquery.datetimepicker.css" rel="stylesheet" type="text/css"/>
         <!-- Just for debugging purposes. Don't actually copy this line! -->
@@ -65,19 +94,7 @@ ORDER BY
 
                             <li><a id="forBrand" href="../index.php">Выход</a></li>
                         </ul>
-                        <?php
-                        if ($_SESSION['privelege'] > 0) {
-                            echo ' <form  class="navbar-form navbar-right">
-                                        <div class = "input-group">
-                                            <input type="search" class="form-control" autocomplete="off" id="search" placeholder="Поиск..."/>
-                                            <span class="input-group-btn">
-                                                <button class="form-control btn btn-default btn-primary" id="formSearch" autofocus type="search"> <span class="glyphicon glyphicon-search"></span> </button>
-                                            </span>
 
-                                        </div> 
-                                    </form>';
-                        }
-                        ?>
                     </div>
                 </div>
             </div>
@@ -114,7 +131,7 @@ ORDER BY
                                             <div class="form-inline text-center" style="margin-bottom: 10px">
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>Нач. дата </span>
-                                                    <input type="text" class="form-control" id="datetimepicker1" value="<?php echo $date1;?>">
+                                                    <input type="text" class="form-control" id="datetimepicker1" value="<?php echo $date1; ?>">
                                                 </div>
                                                 <div class="input-group">
                                                     <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>Кон. дата </span>
@@ -170,7 +187,12 @@ ORDER BY
                             <div class="col-xs-12 col-md-12 col-lg-12">
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 ">
-                                        <div id="all_object"></div>
+                                        <div id="all_object">
+                                            <table id="view_table">
+
+                                            </table>
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -181,100 +203,118 @@ ORDER BY
             <!-- Bootstrap core JavaScript
             ================================================== -->
             <!-- Placed at the end of the document so the pages load faster -->
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-            <script src="../js/bootstrap.js" type="text/javascript"></script>
-            <script src="../js/npm.js" type="text/javascript"></script>
-            <script src="../js/jquery.datetimepicker.js" type="text/javascript"></script>
-            <script type="text/javascript">
-                $('#datetimepicker1').datetimepicker({
-                    format: 'd.m.Y',
-                    lang: 'ru',
-                });
-                $('#datetimepicker2').datetimepicker({
-                    format: 'd.m.Y',
-                    lang: 'ru',
-                });
 
-                function frame_hieght() {
-                    if (parent.document.getElementById('blockrandom') != null) {
-                        parent.document.getElementById('blockrandom').style.height = '0px';
-                        parent.document.getElementById('blockrandom').style.height = document.documentElement.offsetHeight + 'px';
-                        var height_wind = parent.document.getElementById('blockrandom').style.height;
-                        height_wind = height_wind.slice(0, -2);
-                        console.log(height_wind);
-                        if (height_wind < 800) {
-                            parent.document.getElementById('blockrandom').style.height = '800px';
-                            parent.document.getElementById('blockrandom').style.width = '1250px';
-                        } else {
-                            parent.document.getElementById('blockrandom').style.height = height_wind + 'px';
-                            parent.document.getElementById('blockrandom').style.width = '1250px';
-                        }
-                    }
+
+    </body>
+</html>
+
+<script type="text/javascript">
+    $('#datetimepicker1').datetimepicker({
+        format: 'd.m.Y',
+        lang: 'ru',
+    });
+    $('#datetimepicker2').datetimepicker({
+        format: 'd.m.Y',
+        lang: 'ru',
+    });
+//                function frame_hieght() {
+//                    if (parent.document.getElementById('blockrandom') != null) {
+//                        parent.document.getElementById('blockrandom').style.height = '0px';
+//                        parent.document.getElementById('blockrandom').style.height = document.documentElement.offsetHeight + 'px';
+//                        var height_wind = parent.document.getElementById('blockrandom').style.height;
+//                        height_wind = height_wind.slice(0, -2);
+//                        console.log(height_wind);
+//                        if (height_wind < 800) {
+//                            parent.document.getElementById('blockrandom').style.height = '800px';
+//                            parent.document.getElementById('blockrandom').style.width = '1250px';
+//                        } else {
+//                            parent.document.getElementById('blockrandom').style.height = height_wind + 'px';
+//                            parent.document.getElementById('blockrandom').style.width = '1250px';
+//                        }
+//                    }
+//                }
+//
+//
+
+
+
+
+    function view_table() {
+        var json = ajaxRequest();
+        var tableName = '#view_table';
+        $.each(json.columns, function (k, colObj) {
+            str = '<th>' + colObj.title + '</th>';
+            $(str).appendTo(tableName + '>thead>tr');
+        });
+        var tables = $(tableName).DataTable({
+            destroy: true,
+            dom: 'Bfrtip',
+               paging: false,
+            "autoWidth": false,
+            oLanguage: {
+                "sLengthMenu": "Отображено _MENU_ записей на страницу",
+                "sSearch": "Поиск:",
+                "sZeroRecords": "Ничего не найдено - извините",
+                "sInfo": "Показано с _START_ по _END_ из _TOTAL_ записей",
+                "sInfoEmpty": "Показано с 0 по 0 из 0 записей",
+                "sInfoFiltered": "(filtered from _MAX_ total records)",
+                "oPaginate": {
+                    "sFirst": "Первая",
+                    "sLast": "Посл.",
+                    "sNext": "След.",
+                    "sPrevious": "Пред.",
                 }
+            },
+            columns: json.columns,
+            data: json.data
 
-                function view_object(date1, date2, id_dist) {
-                    $.ajax({
-                        type: 'POST',
-                        cache: false,
-                        url: 'ajax_objects_voda.php',
-                        data: 'date1=' + date1 + '&date2=' + date2 + '&id_distinct=' + id_dist,
-                        beforeSend: function () {
-                            $('#all_object').html('<div id="circularG"> <div id="circularG_1" class="circularG"> </div> <div id="circularG_2" class="circularG"> </div> <div id="circularG_3" class="circularG"> </div> <div id="circularG_4" class="circularG"> </div> <div id="circularG_5" class="circularG"> </div> <div id="circularG_6" class="circularG"> </div> <div id="circularG_7" class="circularG"> </div> <div id="circularG_8" class="circularG"> </div> </div>');
-                        },
-                        success: function (html) {
-                            $('#all_object').html(html);
-                            $('.go_object').click(function () {
+        });
+    }
 
-                                window.open('object.php?id_object=' + this.id);
-                            });
-                            frame_hieght()
-                        }
-                    });
-                }
+    function ajaxRequest() {
+        var res;
+        var dist = $('#district').val();
+        var date1 = $('#datetimepicker1').val(),
+                date2 = $('#datetimepicker2').val();
+        $.ajax({
+            type: 'POST',
+            cache: false,
+            url: "ajax_objects_voda.php",
+            data: {dist: dist, date1: date1, date2: date2},
+            dataType: "json",
+            async: false,
+            success: function (array) {
+                console.log(array);
+                res = array;
+            }
 
-                $(document).ready(function () {
-                    priveleg = <?php echo $_SESSION['privelege'] ?>;
-                    $('button#0').addClass("active");
-                    var date1 = $('#datetimepicker1').val();
-                    var date2 = $('#datetimepicker2').val();
-                    var id_dist = $('#district').val();
+        })
+        return res;
 
+    }
 
-                    $('#save_file').click(function (){
-                         window.open('ajax/download_dbf.php');
-                    });
+    $(document).ready(function () {
 
-
-                    $("#sub_filtr").click(function () {
-                        //alert($('#district').val());
-                        $('#myModal').modal('hide');
-                        var date1 = $('#datetimepicker1').val();
-                        var date2 = $('#datetimepicker2').val();
-                        view_object(date1, date2, $('#district').val());
+        $("#sub_filtr").click(function () {
+            //alert($('#district').val());
+            $('#myModal').modal('hide');
+            $("th").remove();
+            var date1 = $('#datetimepicker1').val();
+            var date2 = $('#datetimepicker2').val();
+            view_table();
 //                        history.pushState(null, null, '/pulsar_form/voda/objects.php?id_distinct=' + $('#district').val());
-                    });
+        });
 
+        $('#save_file').click(function () {
+            window.open('ajax/download_dbf.php');
+        });
 
-                    console.log(date1 + " " + date2 + " " + id_dist);
-                    view_object(date1, date2, id_dist);
+        view_table();
+        $('#view_table')
+                .removeClass('display')
+                .addClass('table table-striped table-bordered');
 
-                    $('button.distinct').click(function () {
+    }
+    );
 
-                        var date1 = $('#datetimepicker1').val();
-                        var date2 = $('#datetimepicker2').val();
-                        var id_dist = this.id;
-
-                        view_object(date1, date2, id_dist);
-                    });
-                    $('#paramtr').click(function () {
-                        var date1 = $('#datetimepicker1').val();
-                        var date2 = $('#datetimepicker2').val();
-                        var id_dist = 0;
-
-                        view_object(date1, date2, id_dist);
-                    });
-
-                });
-            </script>
-
-    </body></html>
+</script>

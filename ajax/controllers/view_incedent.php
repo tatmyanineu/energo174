@@ -243,6 +243,9 @@ while ($row_date = pg_fetch_row($sql_date)) {
             case 1: $p = [5, 6];
                 break;
             case 2: $p = [5, 6];
+                break;
+            case 3: $p = [19, 5, 20, 6, 775];
+                break;
         }
         if ($key !== false) {
             if (strtotime($row_date[0]) == strtotime($_POST['date'])) {

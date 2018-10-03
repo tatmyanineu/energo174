@@ -7,7 +7,7 @@
  */
 
 
-if ($_SESSION['privelege'] >1) {
+if ($_SESSION['privelege'] >=8) {
     echo '<ul class="nav nav-sidebar">'
     . '<li><a href="interface_voda.php">МУП ПОВВ Интерфейс</a></li>'
     . ' <li><a href="interface_teplo.php">МУП ЧКТС Интерфейс</a></li>'

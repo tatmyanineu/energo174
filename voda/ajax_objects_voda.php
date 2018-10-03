@@ -13,7 +13,13 @@ unset($_SESSION['file_name']);
 
 
 $date1 = $_POST['date1'];
-$date2 = $_POST['date2'];
+
+if (strtotime(date('d.m.Y')) < strtotime($_POST['date2'])) {
+    $date2 = date('d-m-Y');
+} else {
+    $date2 = $_POST['date2'];
+}
+
 
 
 $date_now = date("d", strtotime($date2));
@@ -21,15 +27,12 @@ $date_now = date("d", strtotime($date2));
 $id_dist = $_POST['id_distinct'];
 
 
-echo "<h2 class='text-center'>Вывод данных с " . date("d.m.Y", strtotime($date1)) . " по " . date("d.m.Y", strtotime($date2)) . "</h2>";
-
-
-
 $sql_name_object = pg_query('SELECT DISTINCT 
   "Tepl"."Places_cnt"."Name" as name,
   "Tepl"."Places_cnt".plc_id,
   concat("Tepl"."PropPlc_cnt"."ValueProp", \', \', "PropPlc_cnt1"."ValueProp") AS adr,
-  "Places_cnt1"."Name" as district
+  "Places_cnt1"."Name" as district,
+  "Places_cnt1".plc_id as dist
 FROM
   "Tepl"."User_cnt"
   INNER JOIN "Tepl"."GroupToUserRelations" ON ("Tepl"."User_cnt".usr_id = "Tepl"."GroupToUserRelations".usr_id)
@@ -51,7 +54,9 @@ ORDER BY
 
 
 $plc = pg_fetch_all($sql_name_object);
-
+for ($i = 0; $i < count($plc); $i++) {
+    $plc[$i]['name'] = str_replace('"', '', $plc[$i]['name']);
+}
 
 $sql_number_sens = pg_query('SELECT DISTINCT 
   "Tepl"."ParamResPlc_cnt".prp_id as prp,
@@ -137,13 +142,13 @@ for ($i = 0; $i < count($archive); $i++) {
     if ($i == 0) {
         $val[] = array(
             'date' => $archive[$i]['date'],
-            'value' => $archive[$i]['value']
+            'value' => sprintf("%.2f", $archive[$i]['value'])
         );
     } else {
         if ($archive[$i]['prp_id'] == $archive[$i - 1]['prp_id']) {
             $val[] = array(
                 'date' => $archive[$i]['date'],
-                'value' => $archive[$i]['value']
+                'value' => sprintf("%.2f", $archive[$i]['value'])
             );
         } else {
             if ($archive[$i]['prp_id'] != $archive[$i + 1]['prp_id']) {
@@ -151,19 +156,20 @@ for ($i = 0; $i < count($archive); $i++) {
                     //echo $archive[$i]['plc_id'] . "<br>";
                     $pl = $archive[$i]['plc_id'];
                     $k = array_search($archive[$i - 1]['plc_id'], array_column($plc, 'plc_id'));
-                    $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
+                    $data = voda($val, $date2, $plc[$k]['plc_id']);
                     if ($k !== FALSE) {
-                        $main[] = array(
+                        $main['data'][] = array(
                             'plc_id' => $plc[$k]['plc_id'],
                             'adr' => $plc[$k]['adr'],
                             'name' => $plc[$k]['name'],
                             'district' => $plc[$k]['district'],
+                            'id_dist' => $plc[$k]['dist'],
                             'prp' => $archive[$i - 1]['prp_id'],
                             'param' => $archive[$i - 1]['param'],
-                            'v1' => $data['v1'],
-                            'd1' => $data['d1'],
-                            'v2' => $data['v2'],
-                            'd2' => $data['d2'],
+                            'v1' => sprintf("%.2f", $data['v1']),
+                            'd1' => date('d.m.Y', strtotime($data['d1'])),
+                            'v2' => sprintf("%.2f", $data['v2']),
+                            'd2' => date('d.m.Y', strtotime($data['d2'])),
                             'sum' => $data['sum'],
                             'error' => $data['error']
                         );
@@ -176,19 +182,20 @@ for ($i = 0; $i < count($archive); $i++) {
                     'value' => $archive[$i]['value']
                 );
                 $k = array_search($archive[$i]['plc_id'], array_column($plc, 'plc_id'));
-                $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
+                $data = voda($val, $date2, $plc[$k]['plc_id']);
                 if ($k !== FALSE) {
-                    $main[] = array(
+                    $main['data'][] = array(
                         'plc_id' => $plc[$k]['plc_id'],
                         'adr' => $plc[$k]['adr'],
                         'name' => $plc[$k]['name'],
                         'district' => $plc[$k]['district'],
+                        'id_dist' => $plc[$k]['dist'],
                         'prp' => $archive[$i]['prp_id'],
                         'param' => $archive[$i]['param'],
-                        'v1' => $data['v1'],
-                        'd1' => $data['d1'],
-                        'v2' => $data['v2'],
-                        'd2' => $data['d2'],
+                        'v1' => sprintf("%.2f", $data['v1']),
+                        'd1' => date('d.m.Y', strtotime($data['d1'])),
+                        'v2' => sprintf("%.2f", $data['v2']),
+                        'd2' => date('d.m.Y', strtotime($data['d2'])),
                         'sum' => $data['sum'],
                         'error' => $data['error']
                     );
@@ -205,19 +212,20 @@ for ($i = 0; $i < count($archive); $i++) {
                 } else {
                     $pl = $archive[$i]['plc_id'];
                     $k = array_search($archive[$i - 1]['plc_id'], array_column($plc, 'plc_id'));
-                    $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
+                    $data = voda($val, $date2, $plc[$k]['plc_id']);
                     if ($k !== FALSE) {
-                        $main[] = array(
+                        $main['data'][] = array(
                             'plc_id' => $plc[$k]['plc_id'],
                             'adr' => $plc[$k]['adr'],
                             'name' => $plc[$k]['name'],
                             'district' => $plc[$k]['district'],
+                            'id_dist' => $plc[$k]['dist'],
                             'prp' => $archive[$i - 1]['prp_id'],
                             'param' => $archive[$i - 1]['param'],
-                            'v1' => $data['v1'],
-                            'd1' => $data['d1'],
-                            'v2' => $data['v2'],
-                            'd2' => $data['d2'],
+                            'v1' => sprintf("%.2f", $data['v1']),
+                            'd1' => date('d.m.Y', strtotime($data['d1'])),
+                            'v2' => sprintf("%.2f", $data['v2']),
+                            'd2' => date('d.m.Y', strtotime($data['d2'])),
                             'sum' => $data['sum'],
                             'error' => $data['error']
                         );
@@ -228,7 +236,7 @@ for ($i = 0; $i < count($archive); $i++) {
 
                     $val[] = array(
                         'date' => $archive[$i]['date'],
-                        'value' => $archive[$i]['value']
+                        'value' => sprintf("%.2f", $archive[$i]['value'])
                     );
                 }
             }
@@ -237,22 +245,23 @@ for ($i = 0; $i < count($archive); $i++) {
     if ($i + 1 == count($archive)) {
         $val[] = array(
             'date' => $archive[$i]['date'],
-            'value' => $archive[$i]['value']
+            'value' => sprintf("%.2f", $archive[$i]['value'])
         );
         $k = array_search($archive[$i - 1]['plc_id'], array_column($plc, 'plc_id'));
-        $data = voda($val, $_POST['date2'], $plc[$k]['plc_id']);
+        $data = voda($val, $date2, $plc[$k]['plc_id']);
         if ($k !== FALSE) {
-            $main[] = array(
+            $main['data'][] = array(
                 'plc_id' => $plc[$k]['plc_id'],
                 'adr' => $plc[$k]['adr'],
                 'name' => $plc[$k]['name'],
                 'district' => $plc[$k]['district'],
+                'id_dist' => $plc[$k]['dist'],
                 'prp' => $archive[$i - 1]['prp_id'],
                 'param' => $archive[$i - 1]['param'],
-                'v1' => $data['v1'],
-                'd1' => $data['d1'],
-                'v2' => $data['v2'],
-                'd2' => $data['d2'],
+                'v1' => sprintf("%.2f", $data['v1']),
+                'd1' => date('d.m.Y', strtotime($data['d1'])),
+                'v2' => sprintf("%.2f", $data['v2']),
+                'd2' => date('d.m.Y', strtotime($data['d2'])),
                 'sum' => $data['sum'],
                 'error' => $data['error']
             );
@@ -265,11 +274,12 @@ for ($i = 0; $i < count($param); $i++) {
     if ($k === false) {
         $p = array_search($param[$i]['plc_id'], array_column($plc, 'plc_id'));
         //echo $param[$i]['plc_id'].' '.$plc[$p]['adr'].' '. $plc[$p]['name'].'<br>' ;
-        $main[] = array(
+        $main['data'][] = array(
             'plc_id' => $plc[$p]['plc_id'],
             'adr' => $plc[$p]['adr'],
             'name' => $plc[$p]['name'],
-            'district' => $plc[$k]['district'],
+            'district' => $plc[$p]['district'],
+            'id_dist' => $plc[$p]['dist'],
             'prp' => $param[$i]['prp_id'],
             'param' => $param[$i]['param_id'],
             'v1' => null,
@@ -283,55 +293,101 @@ for ($i = 0; $i < count($param); $i++) {
 }
 
 for ($i = 0; $i < count($cor); $i++) {
-    $k = array_search($cor[$i]['prp_id'], array_column($main, 'prp'));
+    $k = array_search($cor[$i]['prp_id'], array_column($main['data'], 'prp'));
     if ($k !== false) {
         //echo $cor[$i]['plc_id'] . "<br>";
-        $main[$k]['error'] = 4;
+        $main['data'][$k]['error'] = 4;
     }
 }
 
+$col['columns'] = array(
+    array("title" => "plc_id", "data" => "plc_id"),
+    array("title" => "Название", "data" => "name"),
+    array("title" => "Адрес", "data" => "adr"),
+    array("title" => "Район", "data" => "district"),
+    array("title" => "id параметра", "data" => "prp"),
+    array("title" => "Параметр", "data" => "param"),
+    array("title" => "Объем 1(м3)", "data" => "v1"),
+    array("title" => "Дата Нач.", "data" => "d1"),
+    array("title" => "Объем 2(м3)", "data" => "v2"),
+    array("title" => "Дата Кон.", "data" => "d2"),
+    array("title" => "Итого", "data" => "sum"),
+    array("title" => "Номер ошибки", "data" => "error")
+);
 
+$data = array();
+$data = array_merge($data, $col);
+
+
+
+if ($_POST['dist'] == 0) {
+
+    $data = array_merge($data, $main);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+} else {
+    for ($i = 0; $i < count($main['data']); $i++) {
+        if ($main['data'][$i]['id_dist'] == $_POST['dist']) {
+            $arrData['data'][] = array(
+                'plc_id' => $main['data'][$i]['plc_id'],
+                'adr' => $main['data'][$i]['adr'],
+                'name' => $main['data'][$i]['name'],
+                'district' => $main['data'][$i]['district'],
+                'prp' => $main['data'][$i]['prp'],
+                'param' => $main['data'][$i]['param'],
+                'v1' => $main['data'][$i]['v1'],
+                'd1' => $main['data'][$i]['d1'],
+                'v2' => $main['data'][$i]['v2'],
+                'd2' => $main['data'][$i]['d2'],
+                'sum' => $main['data'][$i]['sum'],
+                'error' => $main['data'][$i]['error']
+            );
+        }
+    }
+    unset($main);
+    $main = $arrData;
+    $data = array_merge($data, $main);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+}
 
 //var_dump($main);
-
-echo '<table class="table table-striped table-bordered">'
- . '<thead  id="thead">'
- . '<tr id = "warning">'
- . '<td><b>№</b></td>'
- . '<td><b>plc_id</b></td>'
- . '<td><b>Name</b></td>'
- . '<td><b>adr</b></td>'
- . '<td><b>distr</b></td>'
- . '<td><b>prp</b></td>'
- . '<td><b>param</b></td>'
- . '<td><b>v1</b></td>'
- . '<td><b>d1</b></td>'
- . '<td><b>v2</b></td>'
- . '<td><b>d2</b></td>'
- . '<td><b>summ</b></td>'
- . '<td><b>errror</b></td>'
- . '';
-$n = 1;
-for ($i = 0; $i < count($main); $i++) {
-    echo '<tr>'
-    . '<td>' . $n . '</td>'
-    . '<td>' . $main[$i]['plc_id'] . '</td>'
-    . '<td><a href="object.php?id_object=' . $main[$i]['plc_id'] . '">' . $main[$i]['name'] . '</a></td>'
-    . '<td>' . $main[$i]['adr'] . '</td>'
-    . '<td>' . $main[$i]['district'] . '</td>'
-    . '<td>' . $main[$i]['prp'] . '</td>'
-    . '<td>' . $main[$i]['param'] . '</td>'
-    . '<td>' . $main[$i]['v1'] . '</td>'
-    . '<td>' . $main[$i]['d1'] . '</td>'
-    . '<td>' . $main[$i]['v2'] . '</td>'
-    . '<td>' . $main[$i]['d2'] . '</td>'
-    . '<td>' . $main[$i]['summ'] . '</td>'
-    . '<td> error =>' . $main[$i]['error'] . '</td>'
-    . '</tr>';
-
-    $n++;
-}
-echo '</table>';
+//echo '<table class="table table-striped table-bordered">'
+// . '<thead  id="thead">'
+// . '<tr id = "warning">'
+// . '<td><b>№</b></td>'
+// . '<td><b>plc_id</b></td>'
+// . '<td><b>Name</b></td>'
+// . '<td><b>adr</b></td>'
+// . '<td><b>distr</b></td>'
+// . '<td><b>prp</b></td>'
+// . '<td><b>param</b></td>'
+// . '<td><b>v1</b></td>'
+// . '<td><b>d1</b></td>'
+// . '<td><b>v2</b></td>'
+// . '<td><b>d2</b></td>'
+// . '<td><b>summ</b></td>'
+// . '<td><b>errror</b></td>'
+// . '';
+//$n = 1;
+//for ($i = 0; $i < count($main); $i++) {
+//    echo '<tr>'
+//    . '<td>' . $n . '</td>'
+//    . '<td>' . $main[$i]['plc_id'] . '</td>'
+//    . '<td><a href="object.php?id_object=' . $main[$i]['plc_id'] . '">' . $main[$i]['name'] . '</a></td>'
+//    . '<td>' . $main[$i]['adr'] . '</td>'
+//    . '<td>' . $main[$i]['district'] . '</td>'
+//    . '<td>' . $main[$i]['prp'] . '</td>'
+//    . '<td>' . $main[$i]['param'] . '</td>'
+//    . '<td>' . $main[$i]['v1'] . '</td>'
+//    . '<td>' . $main[$i]['d1'] . '</td>'
+//    . '<td>' . $main[$i]['v2'] . '</td>'
+//    . '<td>' . $main[$i]['d2'] . '</td>'
+//    . '<td>' . $main[$i]['summ'] . '</td>'
+//    . '<td> error =>' . $main[$i]['error'] . '</td>'
+//    . '</tr>';
+//
+//    $n++;
+//}
+//echo '</table>';
 
 function voda($array, $post_date, $plc) {
     if ($plc == 99) {
@@ -356,7 +412,7 @@ function voda($array, $post_date, $plc) {
             $sum += $r;
         }
     }
-    $data['sum'] = $sum;
+    $data['sum'] = sprintf("%.2f", $sum);
     if ($nan == FALSE) {
         if (strtotime($data['d2']) != strtotime($post_date)) {
             $data['error'] = '1';
@@ -388,6 +444,7 @@ while ($row = pg_fetch_row($sql_prop)) {
 }
 
 $def = array(
+    array("CONTRACTID", "C", 11),
     array("HOUSE_ID", "C", 16),
     array("HOUSE_FIAS", "C", 36),
     array("STNAME", "C", 128),
@@ -404,7 +461,6 @@ $def = array(
     array("ER_CODE", "N", 10, 0),
     array("ER_NAME", "C", 128),
     array("ER_INFO", "C", 128),
-    array("CONTRACTID", "C", 11),
     array("KV", "C", 32),
     array("PLACE", "C", 32)
 );
@@ -419,16 +475,16 @@ if (!dbase_create($dbf_name, $def)) {
 
 $dbf = dbase_open($dbf_name, 2);
 
-for ($i = 0; $i < count($main); $i++) {
+for ($i = 0; $i < count($main['data']); $i++) {
 
     if ($main[$i]['plc_id'] == 99) {
         $g++;
     }
-    $k = array_search($main[$i]['plc_id'], array_column($f, 'plc_id'));
-    $plc = $main[$i]['plc_id'];
-    $name = $main[$i]['name'];
-    $adr = $main[$i]['adr'];
-    $house_id = 50000000 + $main[$i]['plc_id'];
+    $k = array_search($main['data'][$i]['plc_id'], array_column($f, 'plc_id'));
+    $plc = $main['data'][$i]['plc_id'];
+    $name = $main['data'][$i]['name'];
+    $adr = $main['data'][$i]['adr'];
+    $house_id = 50000000 + $main['data'][$i]['plc_id'];
     if ($k !== false) {
         $fias_code = $f[$k]['fias'];
         $dog = $f[$k]['cdog'];
@@ -437,7 +493,7 @@ for ($i = 0; $i < count($main); $i++) {
         $dog = "";
     }
 
-    $e = array_search($main[$i]['prp'], array_column($prop, 'prp'));
+    $e = array_search($main['data'][$i]['prp'], array_column($prop, 'prp'));
     if ($e !== false) {
         $con = $prop[$e]['id_con'];
         $num = $prop[$e]['numb'];
@@ -448,49 +504,49 @@ for ($i = 0; $i < count($main); $i++) {
         //$numb =;
     }
 
-    $adr = explode(", ", $main[$i]['adr']);
+    $adr = explode(", ", $main['data'][$i]['adr']);
 
-    switch ($main[$i]['error']) {
+    switch ($main['data'][$i]['error']) {
         case 0:
             $e = "";
             $t = "";
             break;
         case 1:
-            $e = $main[$i]['error'];
+            $e = $main['data'][$i]['error'];
             $t = "Не полный архив за период";
             break;
         case 2:
-            $e = $main[$i]['error'];
+            $e = $main['data'][$i]['error'];
             $t = "NaN значения в архиве";
             break;
         case 4:
-            $e = $main[$i]['error'];
+            $e = $main['data'][$i]['error'];
             $t = "Коррекция показаний";
             break;
         case 5:
-            $e = $main[$i]['error'];
+            $e = $main['data'][$i]['error'];
             $t = "отсутствует архив прибора";
             break;
     }
 
     dbase_add_record($dbf, array(
+        iconv('UTF-8', 'CP866', $dog), //код договора
         iconv('UTF-8', 'CP866', $house_id), //Идентификатор
         iconv('UTF-8', 'CP866', $fias_code), //ФИАС код
         iconv('UTF-8', 'CP866', $adr[0]), // Улица
         iconv('UTF-8', 'CP866', $adr[1]), //Дом
         iconv('UTF-8', 'CP866', $con), //ID счетчика в системе поставщика
         iconv('UTF-8', 'CP866', $num), // заводской номер счечтика
-        iconv('UTF-8', 'CP866', $main[$i]['v1']), // Предыдущие показания
-        iconv('UTF-8', 'CP866', date('Ymd', strtotime($main[$i]['d1']))), // Дата снятия предыдущего показания
-        iconv('UTF-8', 'CP866', $main[$i]['v2']), // Текущие покзаания
-        iconv('UTF-8', 'CP866', date('Ymd', strtotime($main[$i]['d2']))), // Дата снятия текущий покзааний
-        iconv('UTF-8', 'CP866', $main[$i]['sum']), // Расход
-        iconv('UTF-8', 'CP866', $main[$i]['v2']), // объем потребления по ИПУ
+        iconv('UTF-8', 'CP866', $main['data'][$i]['v1']), // Предыдущие показания
+        iconv('UTF-8', 'CP866', date('Ymd', strtotime($main['data'][$i]['d1']))), // Дата снятия предыдущего показания
+        iconv('UTF-8', 'CP866', $main['data'][$i]['v2']), // Текущие покзаания
+        iconv('UTF-8', 'CP866', date('Ymd', strtotime($main['data'][$i]['d2']))), // Дата снятия текущий покзааний
+        iconv('UTF-8', 'CP866', $main['data'][$i]['sum']), // Расход
+        iconv('UTF-8', 'CP866', $main['data'][$i]['v2']), // объем потребления по ИПУ
         iconv('UTF-8', 'CP866', 0), // Объем потребления по нормативу
         iconv('UTF-8', 'CP866', $e), // Код несправности
         iconv('UTF-8', 'CP866', $t), // Описание неисправности
         iconv('UTF-8', 'CP866', ''), // Доп инфомрация об ошибке
-        iconv('UTF-8', 'CP866', $dog), //код договора
         iconv('UTF-8', 'CP866', ''), // Диапазон квартир
         iconv('UTF-8', 'CP866', '') // место установки ПУ
             )

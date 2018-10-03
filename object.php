@@ -107,21 +107,7 @@ if (pg_num_rows($sql_search_object) != 0) {
             <div class="row">
                 <!--Боковое меню -->
                 <div class="col-sm-3 col-md-2 sidebar">
-                    <ul class="nav nav-sidebar">
-                        <li class="active"><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>
-                        <li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты   </a></li>
-                        <?php
-                        if ($_SESSION['privelege'] > 0) {
-                            echo '<li><a href="alarm.php" data-toggle="tooltip" data-placement="right" title="Процент неисправных обьектов: ' . number_format($_SESSION['proc'], 2) . '%"><span class="glyphicon glyphicon-bell" ></span><span id="reload_alarm" class="badge pull-right">' . $_SESSION['alarm'] . '</span> Аварии   </a></li>'
-                            . '<li><a href="maps.php"><span class="glyphicon glyphicon-globe"></span> Карта </a></li>'
-                            . '<li><a href="logs.php"><span class="glyphicon glyphicon-book"></span> Логи </a></li>'
-                            . '<li><a href="tickets.php"><span class="glyphicon glyphicon-tags"></span> <span id="reload_alarm" class="badge pull-right">' . $_SESSION['count_ticiket'] . '</span> Заявки</a></li>'
-                            . '<li><a href="settings/index.php"><span class="glyphicon glyphicon-cog"></span> Настройки</a></li>'
-                            . '<li><a href="password_reports.php"><span class="glyphicon glyphicon-user"></span>  <span id="reload_alarm" class="badge pull-right">' . $_SESSION['reports_passord'] . '</span> Востановление пароля</a></li>'
-                            ;
-                        }
-                        ?>
-                    </ul>
+                   <?php include './include/menu.php'; ?> 
 
                     <ul class="nav nav-sidebar">
                         <li><a id="export_arch_teplo" href="#"> <span class="glyphicon glyphicon-floppy-disk"></span>Экспорт архива</a></li>
@@ -129,7 +115,7 @@ if (pg_num_rows($sql_search_object) != 0) {
                     </ul>
                     <ul class="nav nav-sidebar">
                         <?php
-                        if ($_SESSION['privelege'] > 0) {
+                        if ($_SESSION['privelege'] >= 8) {
                             echo '<li><a id="" href="settings/correction.php?id_object=' . $id_object . '"> <span class="glyphicon glyphicon-dashboard"></span>Коррекция показаний <span class="badge pull-right">' . pg_num_rows($sql_all_correct) . '</span></a></li>';
 
 

@@ -90,7 +90,9 @@ session_start();
                                                 <th>Тип проверки</th>
                                                 <th>Дата</th>
                                                 <th>Коментаций ошибки</th>
+                                                <th>Коммент. пользователя</th>
                                                 <th>Статус</th>
+
                                                 <th></th>
                                             </tr>
                                         </thead>
@@ -142,6 +144,7 @@ session_start();
                         {data: "incedent"},
                         {data: "date", searchable: false},
                         {data: "comment", searchable: false},
+                        {data: "comment_user", searchable: false},
                         {data: "view", searchable: false},
                         {data: null,
                             searchable: false,

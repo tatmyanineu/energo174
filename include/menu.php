@@ -10,25 +10,60 @@
 
 include './db_config.php';
 
-if ($_SESSION['privelege'] > 1) {
+switch ($_SESSION['privelege']) {
+    case 0:
+        echo '<ul class = "nav nav-sidebar">'
+        . '<li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>'
+        . '<li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>'
+        . '</ul>';
+        break;
 
-    echo '<ul class = "nav nav-sidebar">'
-    . '<li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>'
-    . '<li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>'
-    . '<li><a href="alarm.php" data-toggle="tooltip" data-placement="right" title="Процент неисправных обьектов: ' . number_format($_SESSION['proc'], 2) . '%"><span class="glyphicon glyphicon-bell" ></span><span id="reload_alarm" class="badge pull-right">' . $_SESSION['alarm'] . '</span> Аварии   </a></li>'
-    . '<li><a href="maps.php"><span class="glyphicon glyphicon-globe"></span> Карта </a></li>'
-    . '<li><a href="logs.php"><span class="glyphicon glyphicon-book"></span> Логи </a></li>'
-    . '<li><a href="tickets.php"><span class="glyphicon glyphicon-tags"></span> <span id="reload_alarm" class="badge pull-right">' . $_SESSION['count_ticiket'] . '</span> Заявки</a></li>'
-    . '<li><a href="settings/index.php"><span class="glyphicon glyphicon-cog"></span> <span id="reload_alarm" class="badge pull-right"></span> Настройки</a></li>'
-    . '<li><a href="password_reports.php"><span class="glyphicon glyphicon-lock"></span>  <span id="reload_alarm" class="badge pull-right">' . $_SESSION['reports_passord'] . '</span> Востановление пароля</a></li>'
-    . '<li><a href="users.php"><span class="glyphicon glyphicon-user"></span>Пользователи</a></li>'
-    . '<li><a href="controller.php"><span class="glyphicon glyphicon-bullhorn"></span>Режим диспетчера</a></li>'
-    . '</ul>';
-} else {
-    echo '<ul class = "nav nav-sidebar">'
-    . '<li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>'
-    . '<li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>'
-    . '</ul>';
+    case 3:
+        echo '<ul class = "nav nav-sidebar">'
+        . '<li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>'
+        . '<li><a href="maps.php"><span class="glyphicon glyphicon-globe"></span> Карта </a></li>'
+        . '</ul>';
+        break;
+
+    case 8:
+    case 14:
+    case 31:
+        echo '<ul class = "nav nav-sidebar">'
+        . '<li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>'
+        . '<li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>'
+        . '<li><a href="alarm.php" data-toggle="tooltip" data-placement="right" title="Процент неисправных обьектов: ' . number_format($_SESSION['proc'], 2) . '%"><span class="glyphicon glyphicon-bell" ></span><span id="reload_alarm" class="badge pull-right">' . $_SESSION['alarm'] . '</span> Аварии   </a></li>'
+        . '<li><a href="maps.php"><span class="glyphicon glyphicon-globe"></span> Карта </a></li>'
+        . '<li><a href="logs.php"><span class="glyphicon glyphicon-book"></span> Логи </a></li>'
+        . '<li><a href="tickets.php"><span class="glyphicon glyphicon-tags"></span> <span id="reload_alarm" class="badge pull-right">' . $_SESSION['count_ticiket'] . '</span> Заявки</a></li>'
+        . '<li><a href="settings/index.php"><span class="glyphicon glyphicon-cog"></span> <span id="reload_alarm" class="badge pull-right"></span> Настройки</a></li>'
+        . '<li><a href="password_reports.php"><span class="glyphicon glyphicon-lock"></span>  <span id="reload_alarm" class="badge pull-right">' . $_SESSION['reports_passord'] . '</span> Востановление пароля</a></li>'
+        . '<li><a href="users.php"><span class="glyphicon glyphicon-user"></span>Пользователи</a></li>'
+        . '<li><a href="controller.php"><span class="glyphicon glyphicon-bullhorn"></span>Режим диспетчера</a></li>'
+        . '</ul>';
+
+        break;
 }
+
+//
+//if ($_SESSION['privelege'] >= 8) {
+//
+//    echo '<ul class = "nav nav-sidebar">'
+//    . '<li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>'
+//    . '<li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>'
+//    . '<li><a href="alarm.php" data-toggle="tooltip" data-placement="right" title="Процент неисправных обьектов: ' . number_format($_SESSION['proc'], 2) . '%"><span class="glyphicon glyphicon-bell" ></span><span id="reload_alarm" class="badge pull-right">' . $_SESSION['alarm'] . '</span> Аварии   </a></li>'
+//    . '<li><a href="maps.php"><span class="glyphicon glyphicon-globe"></span> Карта </a></li>'
+//    . '<li><a href="logs.php"><span class="glyphicon glyphicon-book"></span> Логи </a></li>'
+//    . '<li><a href="tickets.php"><span class="glyphicon glyphicon-tags"></span> <span id="reload_alarm" class="badge pull-right">' . $_SESSION['count_ticiket'] . '</span> Заявки</a></li>'
+//    . '<li><a href="settings/index.php"><span class="glyphicon glyphicon-cog"></span> <span id="reload_alarm" class="badge pull-right"></span> Настройки</a></li>'
+//    . '<li><a href="password_reports.php"><span class="glyphicon glyphicon-lock"></span>  <span id="reload_alarm" class="badge pull-right">' . $_SESSION['reports_passord'] . '</span> Востановление пароля</a></li>'
+//    . '<li><a href="users.php"><span class="glyphicon glyphicon-user"></span>Пользователи</a></li>'
+//    . '<li><a href="controller.php"><span class="glyphicon glyphicon-bullhorn"></span>Режим диспетчера</a></li>'
+//    . '</ul>';
+//} else {
+//    echo '<ul class = "nav nav-sidebar">'
+//    . '<li><a href="objects.php"><span class="glyphicon glyphicon-home"></span> Главная  </a></li>'
+//    . '<li><a href="limits.php"><span class="glyphicon glyphicon-list-alt"></span>  Лимиты  </a></li>'
+//    . '</ul>';
+//}
 
 

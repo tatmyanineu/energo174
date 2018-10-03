@@ -18,7 +18,8 @@ $sql = pg_query('SELECT
   public.fault_inc.comments,
   public.fault_inc.plc_id,
   public.fault_inc.id,
-  concat ("Tepl"."PropPlc_cnt"."ValueProp", \', \', "PropPlc_cnt1"."ValueProp") as adr
+  concat ("Tepl"."PropPlc_cnt"."ValueProp", \', \', "PropPlc_cnt1"."ValueProp") as adr,
+  public.fault_inc.user_comment
 FROM
   public.fault_inc
   INNER JOIN public.fault_cnt ON (public.fault_inc.numb = public.fault_cnt.id)
@@ -60,7 +61,8 @@ while($row = pg_fetch_row($sql)){
         'comment'=>$row[3],
         'plc_id'=>$row[6],
         'inc_id'=>$row[7],
-        'adr'=>$row[8]
+        'adr'=>$row[8],
+        'comment_user'=>$row[9]
     );
     $i++;
 }
